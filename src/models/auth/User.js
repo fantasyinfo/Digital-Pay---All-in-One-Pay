@@ -10,6 +10,7 @@ const userSchema = new Schema({
   email: { type: String, required: true, unique: true },
   dob: { type: Date },
   phone: { type: String },
+  role:{type:Number, default:1},// 1 = user
   address: {
     addressLine1: { type: String },
     addressLine2: { type: String },
@@ -26,7 +27,9 @@ const userSchema = new Schema({
   },
   password: {
     type: String,
-    required: true,
+    required: function() {
+      return this.isModified('password'); // Only require if password is being modified
+    },
     validate: {
       validator: function (v) {
         // Password regex: at least 1 uppercase, 1 lowercase, 1 number, 1 special character, min 8 characters

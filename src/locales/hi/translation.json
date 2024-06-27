@@ -1,0 +1,67 @@
+{
+  "welcome": "स्वागत है",
+  "success": "सफलता",
+  "error": "त्रुटि",
+  "routeNotFound": "त्रुटि: मार्ग किसी ज्ञात मार्ग से मेल नहीं खाता। कृपया मार्ग जांचें या समर्थन से संपर्क करें।",
+  "errorMessages": {
+    "auth": {
+      "register": {
+        "userRegisterFailed": "उपयोगकर्ता पंजीकरण विफल हुआ। कृपया कुछ समय बाद पुन: प्रयास करें या समर्थन से संपर्क करें।"
+      },
+      "login": {
+        "detailsNotMatch": "उपयोगकर्ता लॉगिन विवरण मेल नहीं खाते।",
+        "incorrectDetails": "गलत क्रेडेंशियल्स। लॉगिन विवरण मेल नहीं खाते।",
+        "userLoginFailed": "लॉगिन में विफल, कृपया कुछ समय बाद प्रयास करें या समर्थन से संपर्क करें।"
+      },
+      "user": {
+        "userNotFound": "उपयोगकर्ता नहीं मिला।",
+        "userDetailsNotMatch": "उपयोगकर्ता विवरण मेल नहीं खाते/नहीं मिले।"
+      },
+      "password": {
+        "passwordUpdateFailed": "पासवर्ड अपडेट करने में विफल।"
+      },
+      "otp": {
+        "otpNotVerify": "OTP सत्यापित नहीं हुआ।",
+        "otpVerifyRequired": "पहले OTP सत्यापन करना आवश्यक है।",
+        "otpExpired": "OTP समाप्त हो गया है।",
+        "otpTimeOutRegenerate": "OTP समय समाप्त हो गया है, कृपया नया OTP पुनः उत्पन्न करें।",
+        "otpVerifyFailed": "OTP सत्यापन विफल हुआ।",
+        "otpNotMatched": "OTP मेल नहीं खाता। कृपया सही OTP उपयोग करें।",
+        "otpSendFail": "OTP भेजने में विफल।",
+        "passwordResetOtp": "पासवर्ड रीसेट OTP भेजने में विफल।"
+      }
+    }
+  },
+  "successMessages": {
+    "auth": {
+      "register": "उपयोगकर्ता सफलतापूर्वक पंजीकृत हुआ। अपने ईमेल की जाँच करें OTP के लिए।",
+      "login": "लॉगिन सफल।",
+      "otp": "OTP सफलतापूर्वक सत्यापित।",
+      "otpSend": "OTP सफलतापूर्वक भेजा गया। अपने ईमेल की जाँच करें।",
+      "passwordRestOtpSend": "पासवर्ड रीसेट OTP सफलतापूर्वक भेजा गया।",
+      "passwordUpdated": "पासवर्ड सफलतापूर्वक अपडेट किया गया।"
+    }
+  },
+  "emailMessages": {
+    "auth": {
+      "register": {
+        "subject": "OTP सत्यापन",
+        "body": "आपका पंजीकरण के लिए OTP है "
+      },
+      "resentOTP": {
+        "subject": "OTP सत्यापन",
+        "body": "आपका नया पंजीकरण के लिए OTP है "
+      },
+      "passwordSet": {
+        "subject": "पासवर्ड रीसेट OTP",
+        "body": "आपका पासवर्ड रीसेट करने के लिए OTP है "
+      }
+    }
+  },
+  "token": {
+    "auth": {
+      "missingToken": "अनधिकृत - टोकन अनुपलब्ध है।",
+      "unauthorizeToken": "अनधिकृत - अमान्य टोकन।"
+    }
+  }
+}

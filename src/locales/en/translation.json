@@ -1,0 +1,69 @@
+{
+    "welcome":"Wecome",
+    "success": "Success",
+    "error": "Error",
+    "routeNotFound": "Error Route does not match any known routes. Please check the route or contact support.",
+    "errorMessages": {
+      "auth" : {
+        "register" : {
+          "userRegisterFailed":"User registration failed. Please try after some time or contact support."
+        },
+        "login":{
+          "detailsNotMatch":"User Login details not matched.",
+          "incorrectDetails":"Incorrect credentials. Login Details not match.",
+          "userLoginFailed":"Failed to login, try aftersome time or contact support."
+        },
+        "user":{
+          "userNotFound":"User not found.",
+          "userDetailsNotMatch":"User details not matched/found."
+        },
+        "password":{
+          "passwordUpdateFailed":"Failed to update password."
+        },
+        "otp":{
+          "otpNotVerify":"OTP not verifed.",
+          "otpVerifyRequired":"OTP verification required first.",
+          "otpExpired":"OTP has expired.",
+          "otpTimeOutRegenerate":"OTP Time is expired, Please regenerate new OTP",
+          "otpVerifyFailed":"OTP Verification Failed.",
+          "otpNotMatched":"OTP not matched. Please use correct OTP",
+          "otpSendFail":"Failed to send OTP",
+          "passwordResetOtp":"Failed to send Password reset OTP"
+        }
+      }
+    },
+    "successMessages" : {
+      "auth" : {
+        "register" : "User registered successfully. Check your email for OTP.",
+        "login":"Login Successfull.",
+        "otp":"OTP Verified Successfully.",
+        "otpSend":"OTP sent successfully. Check your email.",
+        "passwordRestOtpSend":"Password reset OTP sent successfully.",
+        "passwordUpdated":"Password Updated Successfully"
+      }
+    },
+    "emailMessages" : {
+      "auth":{
+        "register" : {
+          "subject":"OTP Verification",
+          "body" : "Your OTP for registration is "
+        },
+        "resentOTP" : {
+          "subject":"OTP Verification",
+          "body" : "Your New OTP for registration is "
+        },
+        "passwordSet":{
+          "subject":"Password Reset OTP",
+          "body":"Your OTP for password reset is "
+        }
+       
+      }
+    },
+    "token":{
+      "auth":{
+        "missingToken":"Unauthorized - Missing token.",
+        "unauthorizeToken":"Unauthorized - Invalid token."
+      }
+    }
+    
+  }

@@ -3,6 +3,10 @@ import express from 'express';
 import cors from "cors";
 import dotenv from "dotenv";
 
+// i18
+import i18nextMiddleware from 'i18next-http-middleware';
+import i18next from './utils/i18nextTranslate.js';
+
 // import utils
 import { responseHandler } from './utils/responseHandler.js';
 
@@ -22,6 +26,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use(i18nextMiddleware.handle(i18next));
 
 // Error handling middleware
 app.use(errorMiddleware);

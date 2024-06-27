@@ -6,6 +6,8 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { transporter } from "../../utils/nodeMailer.js";
 import { validateBody } from "../../utils/functionsUtil.js";
+import i18next from "../../utils/i18nextTranslate.js";
+import { APIstatusCodes } from "../../utils/constants.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -23,7 +25,9 @@ export const registerUser = async (req, res) => {
     const otp = generateOTP();
 
     const otpExpiresAt = new Date();
-    otpExpiresAt.setMinutes(otpExpiresAt.getMinutes() + 10);
+    otpExpiresAt.setMinutes(otpExpiresAt.getMinutes() + process.env.OTP_EXPIRE);
+
+    const role = 1; //default to user as of now
     // Save OTP and user details to database
     const newUser = new User({
       firstName,
@@ -31,6 +35,7 @@ export const registerUser = async (req, res) => {
       email,
       password,
       otp,
+      role,
       otpExpiresAt: otpExpiresAt,
       isOTPVerified: false,
     });
@@ -39,21 +44,27 @@ export const registerUser = async (req, res) => {
 
     // Send email with OTP
     const mailOptions = {
-      from: "fantasyinfo.php@gmail.com",
+      from: process.env.SMTP_FROM_EMAIL,
       to: newUser.email,
-      subject: "OTP Verification",
-      text: `Your OTP for registration is ${otp}.`,
+      subject: i18next.t("emailMessages.auth.register.subject"),
+      text: i18next.t("emailMessages.auth.register.body") + otp,
     };
 
     await transporter.sendMail(mailOptions);
 
     return responseHandler.success(
+      req,
       res,
       { email: newUser.email },
-      "User registered successfully. Check your email for OTP."
+      "successMessages.auth.register"
     );
   } catch (error) {
-    return responseHandler.error(res, error, "Failed to register user.");
+    return responseHandler.error(
+      req,
+      res,
+      error,
+      "errorMessages.auth.register.userRegisterFailed"
+    );
   }
 };
 
@@ -70,30 +81,33 @@ export const loginUser = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) {
       return responseHandler.customError(
+        req,
         res,
-        "User not found.",
-        "User details not found",
-        404
+        "errorMessages.auth.user.userNotFound",
+        "errorMessages.auth.user.userDetailsNotMatch",
+        APIstatusCodes[404]
       );
     }
 
     // Check if OTP is verified
     if (!user.isOTPVerified) {
       return responseHandler.customError(
+        req,
         res,
-        "User Registerd, but OTP not verified.",
-        "OTP Verification Required",
-        403
+        "errorMessages.auth.otp.otpNotVerify",
+        "errorMessages.auth.otp.otpVerifyRequired",
+        APIstatusCodes[403]
       );
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return responseHandler.customError(
+        req,
         res,
-        "User Login Details Not Mached",
-        "Incorrect Credentials Login Details",
-        401
+        "errorMessages.auth.login.detailsNotMatch",
+        "errorMessages.auth.login.incorrectDetails",
+        APIstatusCodes[401]
       );
     }
 
@@ -101,13 +115,19 @@ export const loginUser = async (req, res) => {
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
-   return  responseHandler.success(
+    return responseHandler.success(
+      req,
       res,
       { accessToken, refreshToken },
-      "Login successful."
+      "successMessages.auth.login"
     );
   } catch (error) {
-    return responseHandler.error(res, error, "Failed to login.");
+    return responseHandler.error(
+      req,
+      res,
+      error,
+      "errorMessages.auth.login.userLoginFailed"
+    );
   }
 };
 
@@ -123,51 +143,64 @@ export const verifyOTP = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) {
       return responseHandler.customError(
+        req,
         res,
-        "User not found.",
-        "User details not found",
-        404
+        "errorMessages.auth.user.userNotFound",
+        "errorMessages.auth.user.userDetailsNotMatch",
+        APIstatusCodes[404]
       );
-    
     }
     if (user.otp !== otp) {
       return responseHandler.customError(
+        req,
         res,
-        "OTP Not Valid.",
-        "Please add valid otp",
-        403
+        "errorMessages.auth.otp.otpNotVerify",
+        "errorMessages.auth.otp.otpNotMatched",
+        APIstatusCodes[403]
       );
-
     }
     const now = new Date();
     if (now > user.otpExpiresAt) {
       return responseHandler.customError(
+        req,
         res,
-        "OTP Expired",
-        "OTP Time is expired regenrate new otp.",
-        401
+        "errorMessages.auth.otp.otpExpired",
+        "errorMessages.auth.otp.otpTimeOutRegenerate",
+        APIstatusCodes[401]
       );
     }
 
     // Update user status
-    user.isOTPVerified = true;
-    user.otp = "";
-    user.otpExpiresAt = undefined;
-    await user.save();
+    await User.updateOne(
+      { email: user.email },
+      {
+        $set: {
+          isOTPVerified: true,
+          otp: "",
+          otpExpiresAt: undefined,
+        },
+      }
+    );
 
     return responseHandler.success(
+      req,
       res,
       { email: user.email },
-      "OTP verified successfully."
+      "successMessages.auth.otp"
     );
   } catch (error) {
-    return responseHandler.error(res, error, "Failed to verify OTP.");
+    return responseHandler.error(
+      req,
+      res,
+      error,
+      "errorMessages.auth.otp.otpVerifyFailed"
+    );
   }
 };
 
 // Resend OTP for user registration
 export const resendOTP = async (req, res) => {
-  const requiredValues = ['email'];
+  const requiredValues = ["email"];
   const isValid = validateBody(req.body, requiredValues, res);
   if (!isValid) {
     return;
@@ -178,10 +211,11 @@ export const resendOTP = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) {
       return responseHandler.customError(
+        req,
         res,
-        'User not found.',
-        'User details not found',
-        404
+        "errorMessages.auth.user.userNotFound",
+        "errorMessages.auth.user.userDetailsNotMatch",
+        APIstatusCodes[404]
       );
     }
 
@@ -189,29 +223,46 @@ export const resendOTP = async (req, res) => {
     const otp = generateOTP();
 
     // Update OTP and OTP expiration in user document
-    user.otp = otp;
-    user.otpExpiresAt = new Date();
-    user.otpExpiresAt.setMinutes(user.otpExpiresAt.getMinutes() + 10);
-    user.isOTPVerified = false;
-    await user.save();
+
+    const otpExpiresAt = new Date();
+    otpExpiresAt.setMinutes(
+      user.otpExpiresAt.getMinutes() + process.env.OTP_EXPIRE
+    );
+
+    await User.updateOne(
+      { email: user.email },
+      {
+        $set: {
+          otp: otp,
+          otpExpiresAt: otpExpiresAt,
+          isOTPVerified: false,
+        },
+      }
+    );
 
     // Send email with new OTP
     const mailOptions = {
-      from: 'fantasyinfo.php@gmail.com',
+      from: process.env.SMTP_FROM_EMAIL,
       to: user.email,
-      subject: 'OTP Verification',
-      text: `Your new OTP for registration is ${otp}.`,
+      subject: i18next.t("emailMessages.auth.resentOTP.subject"),
+      text: i18next.t("emailMessages.auth.resentOTP.body") + otp,
     };
 
     await transporter.sendMail(mailOptions);
 
     return responseHandler.success(
+      req,
       res,
       { email: user.email },
-      'New OTP sent successfully. Check your email.'
+      "successMessages.auth.otpSend"
     );
   } catch (error) {
-    return responseHandler.error(res, error, 'Failed to resend OTP.');
+    return responseHandler.error(
+      req,
+      res,
+      error,
+      "errorMessages.otp.otpSendFail"
+    );
   }
 };
 
@@ -228,37 +279,52 @@ export const sendPasswordResetOTP = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) {
       return responseHandler.customError(
+        req,
         res,
-        "User not found.",
-        "User details not found",
-        404
+        "errorMessages.auth.user.userNotFound",
+        "errorMessages.auth.user.userDetailsNotMatch",
+        APIstatusCodes[404]
       );
-     
     }
 
     // Generate OTP and set expiry
     const otp = generateOTP();
-    user.resetPasswordOTP = otp;
-    user.resetPasswordExpires = new Date(Date.now() + 30 * 60 * 1000); // OTP expires in 30 minutes
-    await user.save();
+    const otpExpiresAt = new Date();
+    otpExpiresAt.setMinutes(otpExpiresAt.getMinutes() + process.env.OTP_EXPIRE);
+
+    await User.updateOne(
+      { email: user.email },
+      {
+        $set: {
+          resetPasswordOTP: otp,
+          resetPasswordExpires: otpExpiresAt,
+        },
+      }
+    );
 
     // Send email with OTP for password reset
     const mailOptions = {
-      from: "fantasyinfo.php@gmail.com",
+      from: process.env.SMTP_FROM_EMAIL,
       to: user.email,
-      subject: "Password Reset OTP",
-      text: `Your OTP for password reset is ${otp}.`,
+      subject: i18next.t("emailMessages.auth.passwordSet.subject"),
+      text: i18next.t("emailMessages.auth.passwordSet.body") + otp,
     };
 
     await transporter.sendMail(mailOptions);
 
     return responseHandler.success(
+      req,
       res,
       { email: user.email },
-      "Password reset OTP sent successfully."
+      "successMessages.auth.passwordRestOtpSend"
     );
   } catch (error) {
-    return responseHandler.error(res, error, "Failed to send password reset OTP.");
+    return responseHandler.error(
+      req,
+      res,
+      error,
+      "errorMessages.auth.otp.passwordResetOtp"
+    );
   }
 };
 
@@ -275,43 +341,57 @@ export const resetPassword = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) {
       return responseHandler.customError(
+        req,
         res,
-        "User not found.",
-        "User details not found",
-        404
+        "errorMessages.auth.user.userNotFound",
+        "errorMessages.auth.user.userDetailsNotMatch",
+        APIstatusCodes[404]
       );
     }
     if (user.resetPasswordOTP !== otp) {
       return responseHandler.customError(
+        req,
         res,
-        "OTP Not matched",
-        "Please use correct otp",
-        403
+        "errorMessages.auth.otp.otpVerifyFailed",
+        "errorMessages.auth.otp.otpNotMatched",
+        APIstatusCodes[403]
       );
     }
     const now = new Date();
     if (now > user.resetPasswordExpires) {
       return responseHandler.customError(
+        req,
         res,
-        "OTP Expired",
-        "OTP has been expired",
-        401
+        "errorMessages.auth.otp.otpExpired",
+        "errorMessages.auth.otp.otpTimeOutRegenerate",
+        APIstatusCodes[401]
       );
     }
 
-
-    user.password = password;
-    user.resetPasswordOTP = "";
-    user.resetPasswordExpires = undefined;
-    await user.save();
+    await User.updateOne(
+      { email: user.email },
+      {
+        $set: {
+          password: password,
+          resetPasswordOTP: "",
+          resetPasswordExpires: undefined,
+        },
+      }
+    );
 
     return responseHandler.success(
+      req,
       res,
       { email: user.email },
-      "Password updated successfully."
+      "successMessages.auth.passwordUpdated"
     );
   } catch (error) {
-    return responseHandler.error(res, error, "Failed to update password.");
+    return responseHandler.error(
+      req,
+      res,
+      error,
+      "errorMessages.auth.password.passwordUpdateFailed"
+    );
   }
 };
 
@@ -335,20 +415,22 @@ export const verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     return responseHandler.error(
+      req,
       res,
       null,
-      "Unauthorized - Missing token.",
-      401
+      "token.auth.missingToken",
+      APIstatusCodes[401]
     );
   }
   const token = authHeader.split(" ")[1];
   jwt.verify(token, JWT_SECRET, (err, decoded) => {
     if (err) {
       return responseHandler.error(
+        req,
         res,
         err,
-        "Unauthorized - Invalid token.",
-        401
+        "token.auth.unauthorizeToken",
+        APIstatusCodes[401]
       );
     }
     req.userId = decoded.userId;

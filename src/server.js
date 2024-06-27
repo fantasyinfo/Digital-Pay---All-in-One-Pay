@@ -10,7 +10,7 @@ connectDB();
 
 // in last send message if routes not found
 app.use((req, res, next) => {
-  responseHandler.notFound(res, req.originalUrl);
+  responseHandler.notFound(req,res);
 });
 // Start server
 const PORT = process.env.PORT || 8000;
