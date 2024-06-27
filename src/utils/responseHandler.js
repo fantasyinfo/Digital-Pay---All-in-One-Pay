@@ -9,4 +9,7 @@ export const responseHandler = {
     const message = `Route '${route}' does not match any known routes. Please check the route or contact support.`;
     return res.status(404).json({ status: 'error', message });
   },
+  customError: (res, error, message, statusCode) =>{
+    return res.status(statusCode).json({status:'error',message,error})
+  }
 };
