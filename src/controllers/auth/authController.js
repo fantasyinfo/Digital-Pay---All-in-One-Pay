@@ -227,7 +227,13 @@ export const sendPasswordResetOTP = async (req, res) => {
     const { email } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
-      throw new Error("User not found.");
+      return responseHandler.customError(
+        res,
+        "User not found.",
+        "User details not found",
+        404
+      );
+     
     }
 
     // Generate OTP and set expiry
@@ -246,52 +252,66 @@ export const sendPasswordResetOTP = async (req, res) => {
 
     await transporter.sendMail(mailOptions);
 
-    responseHandler.success(
+    return responseHandler.success(
       res,
       { email: user.email },
       "Password reset OTP sent successfully."
     );
   } catch (error) {
-    responseHandler.error(res, error, "Failed to send password reset OTP.");
+    return responseHandler.error(res, error, "Failed to send password reset OTP.");
   }
 };
 
 // Reset password using OTP
 export const resetPassword = async (req, res) => {
-  const requiredValues = ["email", "otp", "newPassword"];
+  const requiredValues = ["email", "otp", "password"];
   const isValid = validateBody(req.body, requiredValues, res);
   if (!isValid) {
     return;
   }
 
   try {
-    const { email, otp, newPassword } = req.body;
+    const { email, otp, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
-      throw new Error("User not found.");
+      return responseHandler.customError(
+        res,
+        "User not found.",
+        "User details not found",
+        404
+      );
     }
     if (user.resetPasswordOTP !== otp) {
-      throw new Error("Invalid OTP.");
+      return responseHandler.customError(
+        res,
+        "OTP Not matched",
+        "Please use correct otp",
+        403
+      );
     }
     const now = new Date();
     if (now > user.resetPasswordExpires) {
-      throw new Error("OTP expired.");
+      return responseHandler.customError(
+        res,
+        "OTP Expired",
+        "OTP has been expired",
+        401
+      );
     }
 
-    // Update password
-    const hashedPassword = await bcrypt.hash(newPassword, 10); // Hash new password
-    user.password = hashedPassword;
+
+    user.password = password;
     user.resetPasswordOTP = "";
     user.resetPasswordExpires = undefined;
     await user.save();
 
-    responseHandler.success(
+    return responseHandler.success(
       res,
       { email: user.email },
       "Password updated successfully."
     );
   } catch (error) {
-    responseHandler.error(res, error, "Failed to update password.");
+    return responseHandler.error(res, error, "Failed to update password.");
   }
 };
 

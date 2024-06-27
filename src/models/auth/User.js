@@ -40,6 +40,8 @@ const userSchema = new Schema({
   otp: { type: String },
   otpExpiresAt: { type: Date },
   isOTPVerified:{type: Boolean, default:false},
+  resetPasswordOTP:{ type: String },
+  resetPasswordExpires:{ type: Date },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
