@@ -368,16 +368,10 @@ export const resetPassword = async (req, res) => {
       );
     }
 
-    await User.updateOne(
-      { email: user.email },
-      {
-        $set: {
-          password: password,
-          resetPasswordOTP: "",
-          resetPasswordExpires: undefined,
-        },
-      }
-    );
+    user.password = password; 
+    user.resetPasswordOTP = '';
+    user.resetPasswordExpires = undefined;
+    await user.save();
 
     return responseHandler.success(
       req,
@@ -410,30 +404,4 @@ function generateRefreshToken(user) {
   return jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: "7d" });
 }
 
-// Verify JWT token function (middleware)
-export const verifyToken = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) {
-    return responseHandler.error(
-      req,
-      res,
-      null,
-      "token.auth.missingToken",
-      APIstatusCodes[401]
-    );
-  }
-  const token = authHeader.split(" ")[1];
-  jwt.verify(token, JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return responseHandler.error(
-        req,
-        res,
-        err,
-        "token.auth.unauthorizeToken",
-        APIstatusCodes[401]
-      );
-    }
-    req.userId = decoded.userId;
-    next();
-  });
-};
+

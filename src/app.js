@@ -15,6 +15,8 @@ import { errorMiddleware } from './middlewares/errorMiddleware.js';
 
 // import routes
 import authRouter from './routes/v1/auth/authRoutes.js';
+import apiTokenRouter from './routes/v1/apiToken/apiTokenRoutes.js';
+import { verifyToken } from './middlewares/verifyTokenMiddleware.js';
 
 // init dot config
 dotenv.config();
@@ -34,6 +36,7 @@ app.use(errorMiddleware);
 
 // Routes
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/apiToken', verifyToken, apiTokenRouter);
 
 
 

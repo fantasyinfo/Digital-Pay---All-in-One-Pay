@@ -1,6 +1,8 @@
-import app from './app.js';
-import connectDB from './config/database.js';
-import { responseHandler } from './utils/responseHandler.js';
+import app from "./app.js";
+import connectDB from "./config/database.js";
+
+import { APIstatusCodes } from "./utils/constants.js";
+import { responseHandler } from "./utils/responseHandler.js";
 
 // Database connection
 connectDB();
@@ -10,7 +12,7 @@ connectDB();
 
 // in last send message if routes not found
 app.use((req, res, next) => {
-  responseHandler.notFound(req,res);
+  responseHandler.notFound(req, res);
 });
 // Start server
 const PORT = process.env.PORT || 8000;
