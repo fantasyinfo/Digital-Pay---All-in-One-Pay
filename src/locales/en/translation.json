@@ -64,6 +64,6 @@
         "missingToken":"Unauthorized - Missing token.",
         "unauthorizeToken":"Unauthorized - Invalid token."
       }
-    }
-    
+    },
+    "methodNotAllowed":"This method not allowed, please use correct API method on the same route"
   }

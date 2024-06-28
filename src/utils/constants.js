@@ -36,3 +36,9 @@ export const APIstatusCodes = {
   504: 504, //"Gateway Timeout",
   505: 505, //"HTTP Version Not Supported",
 };
+
+
+export const DBtables = {
+  'user' : 'User',
+  'api_keys':'Apikey'
+}
