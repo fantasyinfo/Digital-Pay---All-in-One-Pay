@@ -65,5 +65,19 @@
         "unauthorizeToken":"Unauthorized - Invalid token."
       }
     },
-    "methodNotAllowed":"This method not allowed, please use correct API method on the same route"
+    "methodNotAllowed":"This method not allowed, please use correct API method on the same route",
+    "apiToken" : {
+      "sandbox": {
+        "tokenAlreadyExits":"Sandbox Token is already exists.",
+        "tokenGenerated":"Sandbox API Token Generated.",
+        "tokenNotGenerated":"Sandbox API Token Not Generated, Please try aftersome time or contact support."
+      },
+      "live":{
+        "tokenAlreadyExists":"Live Token is already exists.",
+        "tokenGenerated":"Live API Token Generated.",
+        "tokenNotGenerated":"Live API Token Not Generated, Please try aftersome time or contact support.",
+        "createSanboxKeysFirst":"Please create sanbox keys first, then you can create live keys"
+      }
+
+    }
   }
