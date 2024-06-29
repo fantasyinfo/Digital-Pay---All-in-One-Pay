@@ -13,7 +13,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 export const registerUser = async (req, res) => {
   const requiredValues = ["firstName", "lastName", "email", "password"];
-  const isValid = validateBody(req.body, requiredValues, res);
+  const isValid = validateBody(req.body, requiredValues, res,req);
   if (!isValid) {
     return;
   }
@@ -71,7 +71,7 @@ export const registerUser = async (req, res) => {
 // Login user after OTP verification
 export const loginUser = async (req, res) => {
   const requiredValues = ["email", "password"];
-  const isValid = validateBody(req.body, requiredValues, res);
+  const isValid = validateBody(req.body, requiredValues, res,req);
   if (!isValid) {
     return;
   }
@@ -134,7 +134,7 @@ export const loginUser = async (req, res) => {
 // Verify OTP for account activation
 export const verifyOTP = async (req, res) => {
   const requiredValues = ["otp", "email"];
-  const isValid = validateBody(req.body, requiredValues, res);
+  const isValid = validateBody(req.body, requiredValues, res,req);
   if (!isValid) {
     return;
   }
@@ -201,7 +201,7 @@ export const verifyOTP = async (req, res) => {
 // Resend OTP for user registration
 export const resendOTP = async (req, res) => {
   const requiredValues = ["email"];
-  const isValid = validateBody(req.body, requiredValues, res);
+  const isValid = validateBody(req.body, requiredValues, res,req);
   if (!isValid) {
     return;
   }
@@ -269,7 +269,7 @@ export const resendOTP = async (req, res) => {
 // Send OTP for password reset
 export const sendPasswordResetOTP = async (req, res) => {
   const requiredValues = ["email"];
-  const isValid = validateBody(req.body, requiredValues, res);
+  const isValid = validateBody(req.body, requiredValues, res,req);
   if (!isValid) {
     return;
   }
@@ -331,7 +331,7 @@ export const sendPasswordResetOTP = async (req, res) => {
 // Reset password using OTP
 export const resetPassword = async (req, res) => {
   const requiredValues = ["email", "otp", "password"];
-  const isValid = validateBody(req.body, requiredValues, res);
+  const isValid = validateBody(req.body, requiredValues, res,req);
   if (!isValid) {
     return;
   }

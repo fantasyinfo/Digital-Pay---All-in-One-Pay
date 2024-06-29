@@ -37,8 +37,20 @@ export const APIstatusCodes = {
   505: 505, //"HTTP Version Not Supported",
 };
 
-
 export const DBtables = {
-  'user' : 'User',
-  'api_keys':'Apikey'
-}
+  user: "User",
+  api_keys: "Apikey",
+};
+
+export const Modes = {
+  live: "LIVE",
+  sandbox: "SANDBOX",
+};
+
+export const PaymentGateways = {
+  paypal: "Paypal Payment Gateway",
+};
+
+export const PaymentGatewayCode = {
+  1: PaymentGateways.paypal,
+};
