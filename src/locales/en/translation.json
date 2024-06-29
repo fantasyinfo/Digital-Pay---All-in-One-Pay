@@ -40,6 +40,9 @@
       },
       "keysNotMatch":"API keys not match.",
       "modeNotMatch":"API mode no match."
+    },
+    "gateway":{
+      "gatewayNotAllowed":"Please check Payment Method Code, Its not in our supoorted List."
     }
   },
   "successMessages": {

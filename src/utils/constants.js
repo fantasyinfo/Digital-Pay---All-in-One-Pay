@@ -47,10 +47,15 @@ export const Modes = {
   sandbox: "SANDBOX",
 };
 
+
+// step 1
 export const PaymentGateways = {
-  paypal: "Paypal Payment Gateway",
+  paypal: "Paypal",
+  stripe: "Stripe",
 };
 
+// step 2
 export const PaymentGatewayCode = {
   1: PaymentGateways.paypal,
+  2: PaymentGateways.stripe,
 };
