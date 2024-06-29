@@ -1,5 +1,7 @@
 import i18next from "./i18nextTranslate.js";
+import express from "express";
 
+// create translate fun
 export const translate = (req, key, options = {}) => {
   if (typeof req.t === "function") {
     return req.t(key, options);
@@ -7,31 +9,60 @@ export const translate = (req, key, options = {}) => {
   return i18next.t(key, options);
 };
 
+
+class ResponseError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "ResponseError";
+  }
+}
+
+
+export const sendResponse = (req, res, statusCode, body) => {
+  if (res && typeof res.status === "function" && typeof res.json === "function") {
+    return res.status(statusCode).json(body);
+  }
+  const errorMessage = "Response object is invalid. Unable to send response.";
+  console.error(errorMessage);
+  console.error({
+    statusCode,
+    body,
+  });
+  throw new ResponseError(errorMessage);
+};
+
+// default responses
 export const responseHandler = {
   success: (req, res, data, messageKey) => {
-    const message = translate(req, messageKey);
-    return res
-      .status(200)
-      .json({ status: translate(req, "success"), message, data });
+    const responseBody = {
+      status: translate(req, "success"),
+      message: translate(req, messageKey),
+      data,
+    };
+    return sendResponse(req, res, 200, responseBody);
   },
   error: (req, res, error, messageKey) => {
-    const message = translate(req, messageKey);
-    return res
-      .status(500)
-      .json({ status: translate(req, "error"), message, error });
+    const responseBody = {
+      status: translate(req, "error"),
+      message: translate(req, messageKey),
+      error,
+    };
+    return sendResponse(req, res, 500, responseBody);
   },
   notFound: (req, res) => {
-    const route = decodeURIComponent(req?.originalUrl);
-    const message = translate(req, "routeNotFound", { route });
-    return res
-      .status(404)
-      .json({ status: translate(req, "error"), message, error: route });
+    const responseBody = {
+      status: translate(req, "error"),
+      message: translate(req, "routeNotFound"),
+      error: req?.originalUrl,
+    };
+    return sendResponse(req, res, 404, responseBody);
   },
   customError: (req, res, errorKey, messageKey, statusCode) => {
-    const message = translate(req, messageKey);
-    const error = translate(req, errorKey);
-    return res
-      .status(statusCode)
-      .json({ status: translate(req, "error"), message, error });
+    const responseBody = {
+      status: translate(req, "error"),
+      message: translate(req, messageKey),
+      error: translate(req, errorKey),
+    };
+    return sendResponse(req, res, statusCode, responseBody);
   },
 };
