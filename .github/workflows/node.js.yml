@@ -19,6 +19,9 @@ jobs:
         with:
           path: ./  # Specify your code directory here
 
+      - name: List Repository Files  # Optional: List files for debugging
+        run: ls -l ${{ github.workspace }}
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
