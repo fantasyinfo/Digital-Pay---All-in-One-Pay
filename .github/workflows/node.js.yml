@@ -2,29 +2,35 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [18.x]  # Adjust to your required Node.js version
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        path: ./digi1pay  # Specify your code directory here
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-      working-directory: ./digi1pay  # Adjust if npm commands need to run within this directory
-    - run: |
-        touch ./digi1pay/.env
-        echo "${{ secrets.PROD_MAIN_B }}" > ./digi1pay/.env
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          path: ./digi1pay  # Specify your code directory here
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+        working-directory: ./digi1pay  # Adjust if npm commands need to run within this directory
+
+      - name: Create .env File
+        run: |
+          echo "PROD_MAIN_B=${{ secrets.PROD_MAIN_B }}" > ./digi1pay/.env
+
+      # Add more steps as needed for build, test, deploy, etc.
