@@ -47,6 +47,10 @@ export const Modes = {
   sandbox: "SANDBOX",
 };
 
+export const __company = {
+  name: "DIGI 1 PAY",
+  client:'Client Details'
+};
 
 // step 1
 export const PaymentGateways = {

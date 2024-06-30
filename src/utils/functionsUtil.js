@@ -1,5 +1,5 @@
+import axios from "axios";
 import { responseHandler } from "./responseHandler.js";
-
 
 export const formatedDate = () => {
   const currentDate = new Date();
@@ -13,40 +13,82 @@ export const formatedDate = () => {
   return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
 };
 
+export const validateBody = (body, requiredValues, res, req) => {
+  const errorMessages = {};
 
-export const validateBody = (body, requiredValues,res,req)=>{
-    
-    const errorMessages = {};
-
-    requiredValues.forEach(value => {
-        if (!body[value]) {
-            errorMessages[value] = `${value} is missing`;
-        }
-    });
-
-    if (Object.keys(errorMessages).length > 0) {
-        responseHandler.customError(req,res, 'Required Parameters are missing', errorMessages, 422);
-        return false; // Indicating validation failed
+  requiredValues.forEach((value) => {
+    if (!body[value]) {
+      errorMessages[value] = `${value} is missing`;
     }
+  });
 
-    return true;
-}
+  if (Object.keys(errorMessages).length > 0) {
+    responseHandler.customError(
+      req,
+      res,
+      "Required Parameters are missing",
+      errorMessages,
+      422
+    );
+    return false; // Indicating validation failed
+  }
 
+  return true;
+};
 
-export const validateHeaders = (headers, requiredValues,res,req)=>{
-    
-    const errorMessages = {};
+export const validateHeaders = (headers, requiredValues, res, req) => {
+  const errorMessages = {};
 
-    requiredValues.forEach(value => {
-        if (!headers[value]) {
-            errorMessages[value] = `${value} Headers is missing`;
-        }
-    });
-
-    if (Object.keys(errorMessages).length > 0) {
-        responseHandler.customError(req,res, 'Required Headers are missing', errorMessages, 422);
-        return false; // Indicating validation failed
+  requiredValues.forEach((value) => {
+    if (!headers[value]) {
+      errorMessages[value] = `${value} Headers is missing`;
     }
+  });
 
-    return true;
-}
+  if (Object.keys(errorMessages).length > 0) {
+    responseHandler.customError(
+      req,
+      res,
+      "Required Headers are missing",
+      errorMessages,
+      422
+    );
+    return false; // Indicating validation failed
+  }
+
+  return true;
+};
+
+export const validate_isString = (value) => {
+  return typeof value === "string" || value instanceof String;
+};
+
+export const validate_isObject = (value) => {
+  return value && typeof value === "object" && value.constructor === Object;
+};
+
+export const validate_isArrayOfObjects = (value) => {
+  return Array.isArray(value) && value.every((item) => validate_isObject(item));
+};
+
+export const validate_isNumber = (value) => {
+  return typeof value === "number" && isFinite(value);
+};
+
+export const validate_isFloat = (value) => {
+  return validate_isNumber(value) && !Number.isInteger(value);
+};
+
+
+export const validators = {
+    isString: validate_isString,
+    isObject: validate_isObject,
+    isArrayOfObjects: validate_isArrayOfObjects,
+    isNumber: validate_isNumber,
+    isFloat: validate_isFloat,
+  };
+
+export const validate_data = (value, functionName) =>  functionName(value);
+
+
+

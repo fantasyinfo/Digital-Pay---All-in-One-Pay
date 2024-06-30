@@ -63,5 +63,5 @@ export const responseHandler = {
       error: translate(req, errorKey),
     };
     return sendResponse(req, res, statusCode, responseBody);
-  },
+  }
 };
