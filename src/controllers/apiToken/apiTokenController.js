@@ -1,7 +1,7 @@
 import ApiToken from "../../models/user/ApiToken.js";
 import { responseHandler } from "../../utils/responseHandler.js";
 
-export const generateSanboxToken = async (req, res) => {
+export const generateSandboxToken = async (req, res) => {
   const userId = req?.userId;
 
   const sanboxKeys = await ApiToken.findOne({ user_id: userId });
@@ -110,9 +110,62 @@ export const generateLiveToken = async (req, res) => {
   }
 };
 
+export const getSandboxKeys = async (req, res) => {
+  const userId = req?.userId;
+
+  const sanboxKeys = await ApiToken.findOne({ user_id: userId });
+
+  if (
+    sanboxKeys &&
+    sanboxKeys.sandbox_keys &&
+    sanboxKeys.sandbox_keys.client_id &&
+    sanboxKeys.sandbox_keys.secret_key
+  ) {
+    return responseHandler.success(
+      req,
+      res,
+      sanboxKeys.sandbox_keys,
+      "successMessages.apiKeys.sandbox.apiKeys"
+    );
+  }
+
+  return responseHandler.error(
+    req,
+    res,
+    "errorMessages.apiKeys.sandbox.apiKeys",
+    "errorMessages.apiKeys.sandbox.apiKeys"
+  );
+};
+
+export const getLiveKeys = async (req, res) => {
+  const userId = req?.userId;
+
+  const liveKeys = await ApiToken.findOne({ user_id: userId });
+
+  if (
+    liveKeys &&
+    liveKeys.live_keys &&
+    liveKeys.live_keys.client_id &&
+    liveKeys.live_keys.secret_key
+  ) {
+    return responseHandler.success(
+      req,
+      res,
+      liveKeys.live_keys,
+      "successMessages.apiKeys.live.apiKeys"
+    );
+  }
+
+  return responseHandler.error(
+    req,
+    res,
+    "errorMessages.apiKeys.live.apiKeys",
+    "errorMessages.apiKeys.live.apiKeys"
+  );
+};
 const generateRandomString = (length) => {
   const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    "-_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
   let result = "";
   const charactersLength = characters.length;
   for (let i = 0; i < length; i++) {

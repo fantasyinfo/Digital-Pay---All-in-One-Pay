@@ -1,5 +1,4 @@
 import i18next from "./i18nextTranslate.js";
-import express from "express";
 
 // create translate fun
 export const translate = (req, key, options = {}) => {
@@ -60,7 +59,7 @@ export const responseHandler = {
   customError: (req, res, errorKey, messageKey, statusCode) => {
     const responseBody = {
       status: translate(req, "error"),
-      message: translate(req, messageKey),
+      message: typeof messageKey !== 'object' ? translate(req, messageKey) : messageKey ,
       error: translate(req, errorKey),
     };
     return sendResponse(req, res, statusCode, responseBody);

@@ -1,0 +1,6 @@
+steps to add new payment gateway
+
+#1 => ./src/utils/constants.js [PaymentGateways.abc]
+#2 => ./src/utils/constants.js [PaymentGatewayCode.key(abc)]
+#3 => create controller folder ./src/controllers/gateway/{abc}/gateway.{abc}.controller.js 
+#4 => include in route folder and register on paymentControllers
