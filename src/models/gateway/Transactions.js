@@ -70,6 +70,9 @@ const transactionSchema = new Schema({
     default: PaymentStatus.pending,
     required: true
   },
+  gatewayStatus:{
+    type: String,
+  },
   currency: {
     type: String,
     required: true,

@@ -44,7 +44,9 @@
     "gateway":{
       "gatewayNotAllowed":"Please check Payment Method Code, Its not in our supoorted List.",
       "gatewayCredientialsRequired" : "Payment Gateway Credientials are required.",
-      "orderCreationFailed":"Order Creation Failed."
+      "orderCreationFailed":"Order Creation Failed.",
+      "notValidTransactionId":"Please Provide Valid Transaction Id.",
+      "orderStatusFetchFailed":"Order Status Fetching Failed, Please try after some time or contact support."
     },
     "dataType":{
       "string":"Please Provide Valid String Data Type.",
@@ -70,7 +72,8 @@
       }
     },
     "gateway":{
-      "orderCreationSuccess":"Order Created Successfully."
+      "orderCreationSuccess":"Order Created Successfully.",
+      "orderStatusFetchedSuccess":"Order Status Successfully Fetched."
     }
   },
   "emailMessages": {

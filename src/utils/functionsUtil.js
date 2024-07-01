@@ -59,6 +59,30 @@ export const validateHeaders = (headers, requiredValues, res, req) => {
   return true;
 };
 
+export const validateParams = (body, requiredValues, res, req) => {
+  const errorMessages = {};
+
+  requiredValues.forEach((value) => {
+    if (!body[value]) {
+      errorMessages[value] = `${value} is missing`;
+    }
+  });
+
+  if (Object.keys(errorMessages).length > 0) {
+    responseHandler.customError(
+      req,
+      res,
+      "Required Parameters are missing",
+      errorMessages,
+      422
+    );
+    return false; // Indicating validation failed
+  }
+
+  return true;
+};
+
+
 export const validate_isString = (value) => {
   return typeof value === "string" || value instanceof String;
 };
