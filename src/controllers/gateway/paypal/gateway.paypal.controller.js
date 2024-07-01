@@ -1,5 +1,10 @@
 import { ApiKeysLive, ApiKeysSandbox } from "../../../utils/apiKeys.js";
-import { Modes, PaymentGateways, __company } from "../../../utils/constants.js";
+import {
+  Modes,
+  PaymentGateways,
+  PaymentStatus,
+  __company,
+} from "../../../utils/constants.js";
 import { responseHandler } from "../../../utils/responseHandler.js";
 import {
   validateBody,
@@ -7,11 +12,13 @@ import {
   validators,
 } from "../../../utils/functionsUtil.js";
 import axios from "axios";
+import Transaction from "../../../models/gateway/Transactions.js";
 
 export const paypal_createPayment = async (req, res) => {
   const _body = req.body;
   const _headers = req.headers;
   const mode = req.mode;
+  const userId = req.userId;
 
   let $paypalClientID = "";
   let $paypalSecretKey = "";
@@ -86,6 +93,8 @@ export const paypal_createPayment = async (req, res) => {
     const requiredValues = [
       "intent",
       "purchase_units",
+      "total_amount",
+      "currency",
     ];
     const isValid = validateBody(_body, requiredValues, res, req);
     if (!isValid) {
@@ -110,6 +119,23 @@ export const paypal_createPayment = async (req, res) => {
       );
     }
 
+    if (!validate_data(_body.total_amount, validators.isString)) {
+      return responseHandler.error(
+        req,
+        res,
+        `"total_amount" :  ${_body.total_amount}`,
+        "errorMessages.dataType.string"
+      );
+    }
+    if (!validate_data(_body.currency, validators.isString)) {
+      return responseHandler.error(
+        req,
+        res,
+        `"currency" :  ${_body.currency}`,
+        "errorMessages.dataType.string"
+      );
+    }
+
     // orderData
     let orderData = {
       intent: _body.intent,
@@ -130,30 +156,66 @@ export const paypal_createPayment = async (req, res) => {
       headers["PayPal-Request-Id"] = _headers["PayPal-Request-Id"];
     }
 
-  
-   
-    const orderResponse = await axios.post(
-      `${$paypalURL}/v2/checkout/orders`,
-      orderData,
-      {
-        headers: headers,
-      }
+    const gatewayUrl = `${$paypalURL}/v2/checkout/orders`;
+
+    const orderResponse = await axios.post(gatewayUrl, orderData, {
+      headers: headers,
+    });
+
+    const link = orderResponse?.data?.links?.find(
+      (link) => link?.rel === "payer-action"
     );
 
-    const link = orderResponse?.data?.links?.find(link => link?.rel === "payer-action");
-
-    const _data  = {
+    // create transaction entry
+    const _transactionObj = {
+      mode,
+      paymentType: PaymentGateways.paypal,
+      gatewayUrl,
+      headers,
+      payload: orderData,
+      response: orderResponse?.data,
+      successResponse: {},
+      failureResponse: {},
       payUrl: link?.href,
-      data: orderResponse?.data
-    }
+      userId,
+      transId: orderResponse?.data?.id,
+      amount: _body.total_amount,
+      isSuccess: false,
+      isFailed: false,
+      currentStatus: PaymentStatus.pending,
+      currency: _body.currency,
+      description: _body.description || "",
+    };
+    const _transaction = new Transaction(_transactionObj);
+    const _updateTransaction = await _transaction.save();
+    const _transcationResObj = _updateTransaction.toObject();
+
+
+    // delete keys from _transaction
+    delete _transcationResObj.userId;
+    delete _transcationResObj.headers;
+
+
+    // return response object
+    const _data = {
+      payUrl: link?.href,
+      data: orderResponse?.data,
+      transaction: _transcationResObj,
+    };
+
     return responseHandler.success(
       req,
       res,
       _data,
-      "Order created successfully"
+      "successMessages.gateway.orderCreationSuccess"
     );
   } catch (error) {
-    console.log(error);
-    return responseHandler.error(req, res, error, "Order creation failed");
+    return responseHandler.error(
+      req,
+      res,
+      error,
+      "errorMessages.gateway.orderCreationFailed"
+    );
   }
 };
+

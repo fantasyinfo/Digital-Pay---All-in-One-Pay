@@ -40,7 +40,20 @@ export const APIstatusCodes = {
 export const DBtables = {
   user: "User",
   api_keys: "Apikey",
+  transaction:"Transaction"
 };
+
+export const PaymentStatus = {
+  pending: "Pending",
+  completed: "Completed",
+  failed: "Failed"
+}
+
+export const SupportedCurrency = {
+  USD: "USD",
+  INR: "INR"
+}
+
 
 export const Modes = {
   live: "LIVE",
