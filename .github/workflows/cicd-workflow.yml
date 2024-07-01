@@ -19,7 +19,7 @@ jobs:
         
   deploy:
     needs: build
-    runs-on: [digital-node-runner]
+    runs-on: [self-hosted]
     steps:
       - name: Pull image from docker hub
         run: docker pull fantasyinfo1/digi1pay:latest
