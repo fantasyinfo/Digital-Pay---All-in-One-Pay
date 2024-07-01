@@ -1,6 +1,7 @@
 import fs from 'fs';
 
 export const paypal_callBack = async (req, res) => {
+    console.log('step 1')
     try {
         // Get data from query parameters
         const data = req.query;
