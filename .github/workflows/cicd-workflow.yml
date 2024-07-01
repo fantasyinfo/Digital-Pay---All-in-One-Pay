@@ -11,7 +11,7 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v3
       - name: Login to docker hub
-        run: docker login -u ${{ secrets.DOCKER_FILE.username }} -p ${{ secrets.DOCKER_FILE.password }} 
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} 
       - name: Build docker image
         run: docker build -t fantasyinfo1/digi1pay .
       - name: Publish image to docker hub
