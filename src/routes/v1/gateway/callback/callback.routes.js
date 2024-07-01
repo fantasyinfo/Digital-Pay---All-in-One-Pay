@@ -1,18 +1,14 @@
 import express from "express";
 import { methodNotAllowed } from "../../../../middlewares/methodNotAllowedMiddleware.js";
-import {
-    paypal_callBack
-} from "../../../../controllers/callback/paypal/callback.paypal.controller.js";
+import { paypal_callBack } from "../../../../controllers/callback/paypal/callback.paypal.controller.js";
 import { PaymentGateways } from "../../../../utils/constants.js";
 import { responseHandler } from "../../../../utils/responseHandler.js";
 
 const callbackRouter = express.Router();
 
-
 const callBackControllers = {
-  [PaymentGateways.paypal]: paypal_callBack,
-}
-
+  paypal: paypal_callBack,
+};
 
 // callback response
 callbackRouter
@@ -22,10 +18,10 @@ callbackRouter
 
 // callback
 
-const _callBack = (req,res) => {
-  const method = req.query.method;
-
+const _callBack = (req, res) => {
+  const method = req.query.method
   const controller = callBackControllers[method];
+
   if (controller) {
     controller(req, res);
   } else {
@@ -37,5 +33,5 @@ const _callBack = (req,res) => {
       APIstatusCodes[402]
     );
   }
-}
+};
 export default callbackRouter;
