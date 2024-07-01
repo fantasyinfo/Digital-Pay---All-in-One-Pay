@@ -43,11 +43,13 @@
     },
     "gateway":{
       "gatewayNotAllowed":"Please check Payment Method Code, Its not in our supoorted List.",
-      "gatewayCredientialsRequired" : "Payment Gateway Credientials are required."
+      "gatewayCredientialsRequired" : "Payment Gateway Credientials are required.",
+      "orderCreationFailed":"Order Creation Failed."
     },
     "dataType":{
       "string":"Please Provide Valid String Data Type.",
-      "arrayOfObject":"Please Provide Valid Array of Objects Data Type."
+      "arrayOfObject":"Please Provide Valid Array of Objects Data Type.",
+      "float":"Please Provide Valid Float Data Type."
     }
   },
   "successMessages": {
@@ -66,6 +68,9 @@
       "live": {
         "apiKeys": "Live Api Keys found."
       }
+    },
+    "gateway":{
+      "orderCreationSuccess":"Order Created Successfully."
     }
   },
   "emailMessages": {

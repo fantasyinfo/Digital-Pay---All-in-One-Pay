@@ -65,6 +65,7 @@ export const validateApiKeys = async (req, res, next) => {
     }
 
     req.mode = mode;
+    req.userId = validateApiKeys.user_id;
 
     next();
   } catch (error) {
