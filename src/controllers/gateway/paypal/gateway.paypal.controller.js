@@ -1,9 +1,9 @@
-import { ApiKeysLive, ApiKeysSandbox } from "../../../utils/apiKeys.js";
+import { ApiKeysLive, ApiKeysSandbox,CallBackUrl } from "../../../utils/apiKeys.js";
 import {
   Modes,
   PaymentGateways,
   PaymentStatus,
-  __company,
+  __company
 } from "../../../utils/constants.js";
 import { responseHandler } from "../../../utils/responseHandler.js";
 import {
@@ -96,6 +96,7 @@ export const paypal_createPayment = async (req, res) => {
       "purchase_units",
       "total_amount",
       "currency",
+      "return_url"
     ];
     const isValid = validateBody(_body, requiredValues, res, req);
     if (!isValid) {
@@ -137,6 +138,16 @@ export const paypal_createPayment = async (req, res) => {
       );
     }
 
+    if (!validate_data(_body.return_url, validators.isString)) {
+      return responseHandler.error(
+        req,
+        res,
+        `"return_url" :  ${_body.return_url}`,
+        "errorMessages.dataType.string"
+      );
+    }
+
+
     // orderData
     let orderData = {
       intent: _body.intent,
@@ -145,6 +156,7 @@ export const paypal_createPayment = async (req, res) => {
 
     if (_body.payment_source) {
       orderData.payment_source = _body.payment_source;
+      orderData.payment_source.paypal.experience_context.return_url = CallBackUrl.paypal
     }
 
     // headers
@@ -172,6 +184,7 @@ export const paypal_createPayment = async (req, res) => {
       mode,
       paymentType: PaymentGateways.paypal,
       gatewayUrl,
+      returnUrl:_body.return_url,
       headers,
       payload: orderData,
       response: orderResponse?.data,
@@ -195,6 +208,9 @@ export const paypal_createPayment = async (req, res) => {
     // delete keys from _transaction
     delete _transcationResObj.userId;
     delete _transcationResObj.headers;
+    delete _transcationResObj.gatewayUrl;
+    delete _transcationResObj.returnUrl;
+    delete _transcationResObj._id;
 
 
     // return response object

@@ -17,8 +17,9 @@ import { errorMiddleware } from './middlewares/errorMiddleware.js';
 import authRouter from './routes/v1/auth/authRoutes.js';
 import apiTokenRouter from './routes/v1/apiToken/apiTokenRoutes.js';
 import { verifyToken } from './middlewares/verifyTokenMiddleware.js';
-import gatewayRouter from './routes/v1/gateway/in/indian.routes.js';
+import gatewayRouter from './routes/v1/gateway/init/init.routes.js';
 import { validateApiKeys } from './middlewares/validateApiKeysMiddleware.js';
+import callbackRouter from './routes/v1/gateway/callback/callback.routes.js';
 
 // init dot config
 dotenv.config();
@@ -44,7 +45,7 @@ app.use('/api/v1/apiToken', verifyToken, apiTokenRouter);
 // gateway routes
 app.use('/api/v1/gateway', validateApiKeys, gatewayRouter);
 
-
+app.use('/api/v1/callback', callbackRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
