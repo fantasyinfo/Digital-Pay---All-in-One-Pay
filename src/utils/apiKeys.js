@@ -19,3 +19,7 @@ export const ApiKeysLive = {
       "EDTC0mAXpDxJyPmAlKzyq2RlbUmmrzjXuro0Dth2dQi_aMtbtqi-JnnkwTzDhod3Gz_6SacCZncXPlL8",
   },
 };
+
+export const CallBackUrl = {
+  paypal: "https://api.fantasyinfo.cloud/api/v1/callback/return?method=paypal"
+}

@@ -18,6 +18,10 @@ const transactionSchema = new Schema({
     type: String,
     required: true
   },
+  returnUrl:{
+    type:String,
+    required:true
+  },
   headers:{
     type:Object,
   },
