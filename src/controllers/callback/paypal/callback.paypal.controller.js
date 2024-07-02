@@ -1,29 +1,86 @@
-import fs from 'fs';
+import axios from "axios";
+import Transaction from "../../../models/gateway/Transactions.js";
+import { ApiKeysLive, ApiKeysSandbox } from "../../../utils/apiKeys.js";
+import {
+  Modes,
+  PaymentGateways,
+  PaymentStatus,
+} from "../../../utils/constants.js";
+import { paypalStatus } from "../../../utils/gateway.status.js";
+import { responseHandler } from "../../../utils/responseHandler.js";
 
 export const paypal_callBack = async (req, res) => {
-    console.log('step 1')
+    const data = req.query;
+    const transId = data.token;
+  
     try {
-        // Get data from query parameters
-        const data = req.query;
-
-        // Convert data to string (for demonstration, you can format this as per your requirement)
-        const dataString = JSON.stringify(data, null, 2);
-
-        // Define the file path and name (adjust as per your file system structure)
-        const filePath = './callback_data.txt';
-
-        // Write to the file
-        fs.writeFile(filePath, dataString, (err) => {
-            if (err) {
-                console.error('Error writing file:', err);
-                res.status(500).send('Error saving data');
-            } else {
-                console.log('Data saved successfully');
-                res.status(200).send('Data saved successfully');
-            }
-        });
+      // Fetch the transaction with this trxId, then fetch the order status again
+      // Once confirmed, update the transaction and return the response to the user's return URL.
+      const _transaction = await Transaction.findOne({ transId });
+  
+      if (!_transaction) {
+        // Return failed response
+        return responseHandler.error(
+          req,
+          res,
+          new Error("Transaction not found"),
+          "errorMessages.transaction.notFound"
+        );
+      }
+  
+      // First check the status of this transaction
+      const _headers = _transaction.headers;
+      const _url =
+        _transaction.mode === Modes.live
+          ? ApiKeysLive[PaymentGateways.paypal].url
+          : ApiKeysSandbox[PaymentGateways.paypal].url;
+      const gatewayUrl = `${_url}/v2/checkout/orders/${transId}`;
+  
+      const orderResponse = await axios.get(gatewayUrl, {
+        headers: _headers,
+      });
+  
+      const orderRes = orderResponse?.data;
+      const status = orderRes?.status;
+  
+      if (
+        status === paypalStatus["APPROVED"] ||
+        status === paypalStatus["COMPLETED"]
+      ) {
+        // Update transaction
+        _transaction.currentStatus = PaymentStatus.completed;
+        _transaction.isSuccess = true;
+        _transaction.successResponse = { payment: true };
+      } else {
+        _transaction.isFailed = true;
+        _transaction.failureResponse = { payment: false };
+      }
+  
+      _transaction.gatewayStatus = status;
+  
+      await _transaction.save();
+  
+      // Return the response to the user.
+      const returnData = {
+        data: {
+          status: _transaction.gatewayStatus,
+          token: transId,
+        },
+        transaction: _transaction.toObject(),
+      };
+  
+      return responseHandler.success(
+        req,
+        res,
+        returnData,
+        "successMessages.callback.success"
+      );
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).send('Error processing request');
+      return responseHandler.error(
+        req,
+        res,
+        error,
+        "errorMessages.callback.failed"
+      );
     }
-};
+  };

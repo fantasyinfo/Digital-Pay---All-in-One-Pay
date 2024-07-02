@@ -52,6 +52,9 @@
       "string":"Please Provide Valid String Data Type.",
       "arrayOfObject":"Please Provide Valid Array of Objects Data Type.",
       "float":"Please Provide Valid Float Data Type."
+    },
+    "callback":{
+      "success":"Return Url Callback Failed, Contact Support."
     }
   },
   "successMessages": {
@@ -74,6 +77,9 @@
     "gateway":{
       "orderCreationSuccess":"Order Created Successfully.",
       "orderStatusFetchedSuccess":"Order Status Successfully Fetched."
+    },
+    "callback":{
+      "success":"Return Url Callback Success."
     }
   },
   "emailMessages": {
