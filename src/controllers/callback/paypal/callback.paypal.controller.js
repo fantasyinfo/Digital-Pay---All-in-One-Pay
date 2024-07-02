@@ -14,8 +14,7 @@ export const paypal_callBack = async (req, res) => {
     const transId = data.token;
   
     try {
-      // Fetch the transaction with this trxId, then fetch the order status again
-      // Once confirmed, update the transaction and return the response to the user's return URL.
+      // Fetch the transaction with this transId
       const _transaction = await Transaction.findOne({ transId });
   
       if (!_transaction) {
@@ -43,38 +42,49 @@ export const paypal_callBack = async (req, res) => {
       const orderRes = orderResponse?.data;
       const status = orderRes?.status;
   
-      if (
-        status === paypalStatus["APPROVED"] ||
-        status === paypalStatus["COMPLETED"]
-      ) {
-        // Update transaction
-        _transaction.currentStatus = PaymentStatus.completed;
-        _transaction.isSuccess = true;
-        _transaction.successResponse = { payment: true };
-      } else {
-        _transaction.isFailed = true;
-        _transaction.failureResponse = { payment: false };
-      }
+      if (paypalStatus.includes(status)) {
+        if (status === "APPROVED" || status === "COMPLETED") {
+          // Update transaction
+          _transaction.currentStatus = PaymentStatus.completed;
+          _transaction.isSuccess = true;
+          _transaction.successResponse = { payment: true };
+          _transaction.isFailed = false; // Ensure this is false
+          _transaction.failureResponse = null; // Clear failure response
+        } else {
+          _transaction.isFailed = true;
+          _transaction.failureResponse = { payment: false };
+          _transaction.isSuccess = false; // Ensure this is false
+          _transaction.successResponse = null; // Clear success response
+        }
   
-      _transaction.gatewayStatus = status;
+        _transaction.gatewayStatus = status;
   
-      await _transaction.save();
+        await _transaction.save();
   
-      // Return the response to the user.
-      const returnData = {
-        data: {
+        // Prepare the return data
+        const returnData = {
           status: _transaction.gatewayStatus,
           token: transId,
-        },
-        transaction: _transaction.toObject(),
-      };
+          transaction: _transaction.toObject(),
+        };
   
-      return responseHandler.success(
-        req,
-        res,
-        returnData,
-        "successMessages.callback.success"
-      );
+        // Extract the user's return URL from the transaction data
+        const userReturnUrl = _transaction.returnUrl; // Assuming this is stored in the transaction
+  
+        // Construct the URL with query parameters
+        const queryParams = new URLSearchParams(returnData).toString();
+        const returnUrlWithParams = `${userReturnUrl}?${queryParams}`;
+  
+        // Redirect to the user's return URL with the data
+        return res.redirect(returnUrlWithParams);
+      } else {
+        return responseHandler.error(
+          req,
+          res,
+          new Error("Invalid status"),
+          "errorMessages.callback.invalidStatus"
+        );
+      }
     } catch (error) {
       return responseHandler.error(
         req,
