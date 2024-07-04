@@ -1,0 +1,122 @@
+{
+  "welcome": "Bienvenido",
+  "success": "Éxito",
+  "error": "Error",
+  "routeNotFound": "Error: La ruta no coincide con ninguna ruta conocida. Por favor, verifique la ruta o contacte al soporte.",
+  "errorMessages": {
+    "auth": {
+      "register": {
+        "userRegisterFailed": "El registro del usuario falló. Por favor, intente nuevamente más tarde o contacte al soporte."
+      },
+      "login": {
+        "detailsNotMatch": "Los detalles de inicio de sesión no coinciden.",
+        "incorrectDetails": "Credenciales incorrectas. Los detalles de inicio de sesión no coinciden.",
+        "userLoginFailed": "No se pudo iniciar sesión, intente nuevamente más tarde o contacte al soporte."
+      },
+      "user": {
+        "userNotFound": "Usuario no encontrado.",
+        "userDetailsNotMatch": "Los detalles del usuario no coinciden/no encontrados."
+      },
+      "password": {
+        "passwordUpdateFailed": "Fallo al actualizar la contraseña."
+      },
+      "otp": {
+        "otpNotVerify": "OTP no verificado.",
+        "otpVerifyRequired": "Primero se requiere la verificación del OTP.",
+        "otpExpired": "El OTP ha expirado.",
+        "otpTimeOutRegenerate": "El tiempo del OTP ha expirado, por favor regenere un nuevo OTP.",
+        "otpVerifyFailed": "La verificación del OTP falló.",
+        "otpNotMatched": "OTP no coincide. Por favor use el OTP correcto.",
+        "otpSendFail": "Error al enviar el OTP.",
+        "passwordResetOtp": "Error al enviar el OTP de restablecimiento de contraseña."
+      }
+    },
+    "apiKeys": {
+      "sandbox": {
+        "apiKeys": "Claves API de Sandbox no encontradas."
+      },
+      "live": {
+        "apiKeys": "Claves API en vivo no encontradas."
+      },
+      "keysNotMatch": "Las claves API no coinciden.",
+      "modeNotMatch": "El modo API no coincide."
+    },
+    "gateway": {
+      "gatewayNotAllowed": "Por favor, verifique el código del método de pago, no está en nuestra lista soportada.",
+      "gatewayCredientialsRequired": "Se requieren credenciales del gateway de pago.",
+      "orderCreationFailed": "Fallo al crear la orden.",
+      "notValidTransactionId": "Por favor proporcione un ID de transacción válido.",
+      "orderStatusFetchFailed": "Error al obtener el estado de la orden, por favor intente más tarde o contacte al soporte."
+    },
+    "dataType": {
+      "string": "Por favor proporcione un tipo de dato String válido.",
+      "arrayOfObject": "Por favor proporcione un tipo de dato Array de Objetos válido.",
+      "float": "Por favor proporcione un tipo de dato Float válido.",
+      "url": "Proporcione un tipo de datos de URL válido"
+    },
+    "callback": {
+      "success": "Error en la devolución de URL, contacte al soporte."
+    }
+  },
+  "successMessages": {
+    "auth": {
+      "register": "Usuario registrado exitosamente. Verifique su correo electrónico para el OTP.",
+      "login": "Inicio de sesión exitoso.",
+      "otp": "OTP verificado exitosamente.",
+      "otpSend": "OTP enviado exitosamente. Verifique su correo electrónico.",
+      "passwordRestOtpSend": "OTP de restablecimiento de contraseña enviado exitosamente.",
+      "passwordUpdated": "Contraseña actualizada exitosamente."
+    },
+    "apiKeys": {
+      "sandbox": {
+        "apiKeys": "Claves API de Sandbox encontradas."
+      },
+      "live": {
+        "apiKeys": "Claves API en vivo encontradas."
+      }
+    },
+    "gateway": {
+      "orderCreationSuccess": "Orden creada exitosamente.",
+      "orderStatusFetchedSuccess": "Estado de la orden obtenido exitosamente."
+    },
+    "callback": {
+      "success": "Devolución de URL exitosa."
+    }
+  },
+  "emailMessages": {
+    "auth": {
+      "register": {
+        "subject": "Verificación OTP",
+        "body": "Su OTP para el registro es "
+      },
+      "resentOTP": {
+        "subject": "Verificación OTP",
+        "body": "Su nuevo OTP para el registro es "
+      },
+      "passwordSet": {
+        "subject": "OTP de restablecimiento de contraseña",
+        "body": "Su OTP para restablecer la contraseña es "
+      }
+    }
+  },
+  "token": {
+    "auth": {
+      "missingToken": "No autorizado - Falta el token.",
+      "unauthorizeToken": "No autorizado - Token inválido."
+    }
+  },
+  "methodNotAllowed": "Este método no está permitido, por favor use el método API correcto en la misma ruta.",
+  "apiToken": {
+    "sandbox": {
+      "tokenAlreadyExits": "El token de Sandbox ya existe.",
+      "tokenGenerated": "Token API de Sandbox generado.",
+      "tokenNotGenerated": "Token API de Sandbox no generado, por favor intente más tarde o contacte al soporte."
+    },
+    "live": {
+      "tokenAlreadyExists": "El token en vivo ya existe.",
+      "tokenGenerated": "Token API en vivo generado.",
+      "tokenNotGenerated": "Token API en vivo no generado, por favor intente más tarde o contacte al soporte.",
+      "createSanboxKeysFirst": "Por favor, cree primero las claves de Sandbox, luego puede crear las claves en vivo."
+    }
+  }
+}

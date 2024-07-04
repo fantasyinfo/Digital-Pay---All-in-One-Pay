@@ -1,5 +1,7 @@
 import { PaymentGateways } from "./constants.js";
 
+const _callback = "https://api.fantasyinfo.cloud/api/v1/callback/return";
+
 export const ApiKeysSandbox = {
   [PaymentGateways.paypal]: {
     url: "https://api-m.sandbox.paypal.com",
@@ -7,6 +9,11 @@ export const ApiKeysSandbox = {
       "AbYAhLlI97qhtm7W-bIk8S7uGrJ9Z9nI9vR2jH188vqXTbE7Y_w4iEz7MSmwSLkfJ_VGSoQjv8p46C9T",
     secretKey:
       "EDTC0mAXpDxJyPmAlKzyq2RlbUmmrzjXuro0Dth2dQi_aMtbtqi-JnnkwTzDhod3Gz_6SacCZncXPlL8",
+  },
+  [PaymentGateways.stripe]: {
+    url: "https://api.stripe.com",
+    clientId: "pk_test_o6ScAy3rikKa1jKhsNZ9HwLn00HIrNEESf",
+    secretKey: "sk_test_ZpiCxEOHseka5xDnfwoRoG0700L2MOuJkS",
   },
 };
 
@@ -18,8 +25,14 @@ export const ApiKeysLive = {
     secretKey:
       "EDTC0mAXpDxJyPmAlKzyq2RlbUmmrzjXuro0Dth2dQi_aMtbtqi-JnnkwTzDhod3Gz_6SacCZncXPlL8",
   },
+  [PaymentGateways.stripe]: {
+    url: "https://api.stripe.com",
+    clientId: "pk_test_o6ScAy3rikKa1jKhsNZ9HwLn00HIrNEESf",
+    secretKey: "sk_test_ZpiCxEOHseka5xDnfwoRoG0700L2MOuJkS",
+  },
 };
 
 export const CallBackUrl = {
-  paypal: "https://api.fantasyinfo.cloud/api/v1/callback/return?method=paypal"
-}
+  paypal: `${_callback}?method=paypal`,
+  stripe: `${_callback}?method=stripe`,
+};

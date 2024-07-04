@@ -65,7 +65,6 @@ export const paypal_callBack = async (req, res) => {
         const returnData = {
           status: _transaction.gatewayStatus,
           token: transId,
-          transaction: _transaction.toObject(),
         };
   
         // Extract the user's return URL from the transaction data

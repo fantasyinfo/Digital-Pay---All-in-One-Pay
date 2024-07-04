@@ -14,6 +14,9 @@ import {
 } from "../../../utils/functionsUtil.js";
 import axios from "axios";
 import Transaction from "../../../models/gateway/Transactions.js";
+import PaymentResponse from '../../../utils/paymentResponse.js'
+
+
 
 export const paypal_createPayment = async (req, res) => {
   const _body = req.body;
@@ -214,16 +217,13 @@ export const paypal_createPayment = async (req, res) => {
 
 
     // return response object
-    const _data = {
-      payUrl: link?.href,
-      data: orderResponse?.data,
-      transaction: _transcationResObj,
-    };
+
+    const _data = new PaymentResponse(link?.href,orderResponse?.data,_transcationResObj);
 
     return responseHandler.success(
       req,
       res,
-      _data,
+      _data.getResponse(),
       "successMessages.gateway.orderCreationSuccess"
     );
   } catch (error) {
