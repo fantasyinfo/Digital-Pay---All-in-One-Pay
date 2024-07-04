@@ -16,7 +16,7 @@ i18next
     backend: {
       loadPath: path.join(__dirname, '../locales/{{lng}}/{{ns}}.json'),
     },
-    preload: ['en', 'hi'], // Preload languages
+    preload: ['en', 'hi','es'], // Preload languages
     fallbackLng:'en',
     detection: {
       order: ['querystring', 'header', 'cookie'], // Adjust order as needed
@@ -24,13 +24,14 @@ i18next
       lookupQuerystring: 'lang', // Query parameter to look for
       lookupHeader: 'accept-language', // Header to look for
     },
-    supportedLngs: ['en', 'hi'], // Supported languages
+    supportedLngs: ['en', 'hi','es'], // Supported languages
     saveMissing: true,
   }, (err, t) => {
     if (err) return console.error(err);
     console.log('i18next is ready...');
     console.log(t('welcome', { lng: 'en' }));
     console.log(t('welcome', { lng: 'hi' }));
+    console.log(t('welcome', { lng: 'es' }));
   });
 
 export default i18next;

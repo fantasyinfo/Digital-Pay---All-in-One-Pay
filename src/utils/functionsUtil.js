@@ -87,6 +87,18 @@ export const validate_isString = (value) => {
   return typeof value === "string" || value instanceof String;
 };
 
+export const validate_isURL = (value) => {
+  const urlPattern = new RegExp(
+    '^(https?:\\/\\/)?' + // protocol
+    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+    '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+    '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+    '(\\#[-a-z\\d_]*)?$','i' // fragment locator
+  );
+  return !!urlPattern.test(value);
+};
+
 export const validate_isObject = (value) => {
   return value && typeof value === "object" && value.constructor === Object;
 };
@@ -110,6 +122,7 @@ export const validators = {
     isArrayOfObjects: validate_isArrayOfObjects,
     isNumber: validate_isNumber,
     isFloat: validate_isFloat,
+    isURL: validate_isURL
   };
 
 export const validate_data = (value, functionName) =>  functionName(value);
