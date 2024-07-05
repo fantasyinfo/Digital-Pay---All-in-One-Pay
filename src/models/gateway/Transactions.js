@@ -22,6 +22,10 @@ const transactionSchema = new Schema({
     type:String,
     required:true
   },
+  cancelUrl:{
+    type:String,
+    required:true
+  },
   headers:{
     type:Object,
   },
