@@ -2,7 +2,7 @@
 import express from 'express';
 import cors from "cors";
 import dotenv from "dotenv";
-
+import bodyParser from 'body-parser';
 // i18
 import i18nextMiddleware from 'i18next-http-middleware';
 import i18next from './utils/i18nextTranslate.js';
@@ -30,6 +30,7 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(cors());
 app.use(i18nextMiddleware.handle(i18next));
 
