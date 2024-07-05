@@ -180,7 +180,7 @@ export const stripe_cancelBack = async (req, res) => {
 };
 
 export const stripe_callBack = async (req, res) => {
-  const data = req.query;
+  const data = req.body;
 
   // Convert data to string (for demonstration, you can format this as per your requirement)
   const dataString = JSON.stringify(data, null, 2);
