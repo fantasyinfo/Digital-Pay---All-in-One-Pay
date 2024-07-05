@@ -180,16 +180,24 @@ export const stripe_cancelBack = async (req, res) => {
 };
 
 export const stripe_callBack = async (req, res) => {
-  const data = req.body;
+
+  const body = req.body;
+  const headers = req.headers;
+  const query = req.query;
+  const params = req.params;
 
   // Convert data to string (for demonstration, you can format this as per your requirement)
-  const dataString = JSON.stringify(data, null, 2);
+  const bodyString = JSON.stringify(body, null, 2);
+  const headerString = JSON.stringify(headers, null, 2);
+  const queryString = JSON.stringify(query, null, 2);
+  const paramsString = JSON.stringify(params, null, 2);
 
+  const combinedString = `Body: ${bodyString}\nHeaders: ${headerString}\nQuery: ${queryString}\n Params: ${paramsString}`;
   // Define the file path and name (adjust as per your file system structure)
   const filePath = "./calback_data.txt";
 
   // Write to the file
-  fs.writeFile(filePath, dataString, (err) => {
+  fs.writeFile(filePath, combinedString, (err) => {
     if (err) {
       console.error("Error writing file:", err);
       res.status(500).send("Error saving data");
