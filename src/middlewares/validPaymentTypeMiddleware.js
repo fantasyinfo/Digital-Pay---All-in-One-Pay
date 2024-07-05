@@ -19,8 +19,8 @@ export const validPaymentType = (req, res, next) => {
     paymentMethodHeader &&
     Object.keys(PaymentGatewayCode).includes(paymentMethodHeader)
   ) {
-    const paymentGateway = PaymentGatewayCode[paymentMethodHeader];
-    req.paymentMethod = PaymentGateways[paymentGateway.toLowerCase()];
+    const paymentGateway = PaymentGatewayCode[paymentMethodHeader].toLowerCase();
+    req.paymentMethod = PaymentGateways[paymentGateway];
     next();
   } else {
     return responseHandler.customError(

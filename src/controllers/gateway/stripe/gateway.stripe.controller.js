@@ -19,7 +19,7 @@ import {
 import axios from "axios";
 import Transaction from "../../../models/gateway/Transactions.js";
 import qs from "qs";
-import PaymentResponse from "../../../utils/paymentResponse.js";
+import {PaymentResponse} from "../../../utils/paymentResponse.js";
 
 export const stripe_createPayment = async (req, res) => {
   const _body = req.body;
