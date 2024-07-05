@@ -8,6 +8,7 @@ import {
 import { stripe_createPayment } from "../../../../controllers/gateway/stripe/gateway.stripe.controller.js";
 import { PaymentGateways } from "../../../../utils/constants.js";
 import { responseHandler } from "../../../../utils/responseHandler.js";
+import { CheckPayloadForInit, CheckPayloadForStatus } from "../../../../middlewares/validatePayloadMiddleware.js";
 
 const gatewayRouter = express.Router();
 
@@ -25,13 +26,13 @@ const paymentStatusControllers = {
 // init the payment
 gatewayRouter
   .route("/init")
-  .post(validPaymentType, (req, res) => _init(req.paymentMethod, req, res))
+  .post(validPaymentType,CheckPayloadForInit, (req, res) => _init(req.paymentMethod, req, res))
   .all(methodNotAllowed);
 
 // check status of that init payment
 gatewayRouter
   .route("/init/:id")
-  .get(validPaymentType, (req, res) => _initGet(req.paymentMethod, req, res))
+  .get(validPaymentType,CheckPayloadForStatus, (req, res) => _initGet(req.paymentMethod, req, res))
   .all(methodNotAllowed);
 
 

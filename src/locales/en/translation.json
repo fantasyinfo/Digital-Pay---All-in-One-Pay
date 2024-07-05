@@ -2,6 +2,8 @@
   "welcome": "Wecome",
   "success": "Success",
   "error": "Error",
+  "unauthorizedError": "Please check gateway api key and secret they are not matched",
+  "badRequestError":"Some Required Fields are missing, Bad Request Error",
   "routeNotFound": "Error Route does not match any known routes. Please check the route or contact support.",
   "errorMessages": {
     "auth": {
