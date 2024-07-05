@@ -101,6 +101,11 @@ const transactionSchema = new Schema(
       type: String,
       required: false,
     },
+    tmpId: {
+      type: Schema.Types.ObjectId,
+      ref: DBtables.tmp,
+      require: false,
+    },
   },
   {
     timestamps: true,
@@ -113,6 +118,7 @@ transactionSchema.index({ userId: 1 });
 transactionSchema.index({ mode: 1 });
 transactionSchema.index({ paymentType: 1 });
 transactionSchema.index({ currentStatus: 1 });
+transactionSchema.index({ tmpId: 1 });
 
 const Transaction = mongoose.model(DBtables.transaction, transactionSchema);
 

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { responseHandler } from "./responseHandler.js";
+import { v4 as uuidv4 } from "uuid";
 
 export const formatedDate = () => {
   const currentDate = new Date();
@@ -82,19 +83,19 @@ export const validateParams = (body, requiredValues, res, req) => {
   return true;
 };
 
-
 export const validate_isString = (value) => {
   return typeof value === "string" || value instanceof String;
 };
 
 export const validate_isURL = (value) => {
   const urlPattern = new RegExp(
-    '^(https?:\\/\\/)?' + // protocol
-    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-    '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-    '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-    '(\\#[-a-z\\d_]*)?$','i' // fragment locator
+    "^(https?:\\/\\/)?" + // protocol
+      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+      "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+      "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+      "(\\#[-a-z\\d_]*)?$",
+    "i" // fragment locator
   );
   return !!urlPattern.test(value);
 };
@@ -115,17 +116,40 @@ export const validate_isFloat = (value) => {
   return validate_isNumber(value) && !Number.isInteger(value);
 };
 
-
 export const validators = {
-    isString: validate_isString,
-    isObject: validate_isObject,
-    isArrayOfObjects: validate_isArrayOfObjects,
-    isNumber: validate_isNumber,
-    isFloat: validate_isFloat,
-    isURL: validate_isURL
-  };
+  isString: validate_isString,
+  isObject: validate_isObject,
+  isArrayOfObjects: validate_isArrayOfObjects,
+  isNumber: validate_isNumber,
+  isFloat: validate_isFloat,
+  isURL: validate_isURL,
+};
 
-export const validate_data = (value, functionName) =>  functionName(value);
+export const validate_data = (value, functionName) => functionName(value);
 
+export const getRandomTmpStringId = () => {
+  const length = 16;
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  const charactersLength = characters.length;
 
+  // Generate a random string of length 16
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
 
+  // Append a UUIDv4
+  result += uuidv4();
+
+  // Append an additional random string of length 16
+  let resultNegative = "";
+  for (let i = 0; i < length; i++) {
+    resultNegative += characters.charAt(
+      Math.floor(Math.random() * charactersLength)
+    );
+  }
+  result += resultNegative;
+
+  return result;
+};

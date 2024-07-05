@@ -40,7 +40,8 @@ export const APIstatusCodes = {
 export const DBtables = {
   user: "User",
   api_keys: "Apikey",
-  transaction:"Transaction"
+  transaction:"Transaction",
+  tmp:"Tmp"
 };
 
 export const PaymentStatus = {
