@@ -183,12 +183,12 @@ export const stripe_callBack = async (req, res) => {
 
 
   const query = req.query;
-
+  const queryString = JSON.stringify(query);
   // Define the file path and name (adjust as per your file system structure)
   const filePath = "./calback_data.txt";
 
   // Write to the file
-  fs.writeFile(filePath, query, (err) => {
+  fs.writeFile(filePath, queryString, (err) => {
     if (err) {
       console.error("Error writing file:", err);
       res.status(500).send("Error saving data");
