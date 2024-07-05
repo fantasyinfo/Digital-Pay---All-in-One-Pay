@@ -14,8 +14,15 @@ import { responseHandler } from "../../../utils/responseHandler.js";
 import axios from "axios";
 import Transaction from "../../../models/gateway/Transactions.js";
 import qs from "qs";
-import { PaymentResponse, StatusResponse } from "../../../utils/paymentResponse.js";
-import { validateParams } from "../../../utils/functionsUtil.js";
+import {
+  PaymentResponse,
+  StatusResponse,
+} from "../../../utils/paymentResponse.js";
+import {
+  getRandomTmpStringId,
+  validateParams,
+} from "../../../utils/functionsUtil.js";
+import Tmp from "../../../models/gateway/Tmp.js";
 
 export const stripe_createPayment = async (req, res) => {
   const _body = req.body;
@@ -135,8 +142,13 @@ const checkOutTrans = async (
   req,
   res
 ) => {
+  // create tmp transation for callback & cancel ref
+  const tmpId = getRandomTmpStringId();
+  const tmptransaction = await Tmp.create({ tmpId });
+
+
   // payload
-  let payload = generateAndGetPayload(_body, req, res);
+  let payload = generateAndGetPayload(_body, req, res, tmpId);
 
   // headers
   const headers = {
@@ -144,10 +156,11 @@ const checkOutTrans = async (
     "Content-Type": "application/x-www-form-urlencoded",
   };
 
-
   const orderResponse = await axios.post(gatewayUrl, qs.stringify(payload), {
     headers,
   });
+
+  console.log(tmptransaction);
 
   const transactions = await createTransactionAndReturn(
     mode,
@@ -157,7 +170,8 @@ const checkOutTrans = async (
     headers,
     payload,
     orderResponse,
-    userId
+    userId,
+    tmptransaction._id
   );
 
   const initId = transactions._id.toString();
@@ -178,13 +192,14 @@ const createTransactionAndReturn = async (
   headers,
   payload,
   orderResponse,
-  userId
+  userId,
+  tmpId
 ) => {
   try {
     // Create transaction entry object
     const transactionObj = {
       mode,
-      paymentType: PaymentGateways.paypal,
+      paymentType: PaymentGateways.stripe,
       gatewayUrl,
       returnUrl: _body.return_url,
       cancelUrl: _body.cancel_url,
@@ -202,6 +217,7 @@ const createTransactionAndReturn = async (
       currentStatus: PaymentStatus.pending,
       currency: _body.currency,
       description: _body.description || "",
+      tmpId,
     };
 
     // Create and save the transaction
@@ -211,13 +227,12 @@ const createTransactionAndReturn = async (
 
     return transactionResObj;
   } catch (error) {
-    console.log("step 4");
     console.error("Error creating transaction:", error);
     throw new Error("Failed to create transaction.");
   }
 };
 
-const generateAndGetPayload = (body, req, res) => {
+const generateAndGetPayload = (body, req, res, tmpId) => {
   let calculatedTotalAmount = 0;
 
   const line_items = body.orderdata.map((item, index) => {
@@ -256,8 +271,8 @@ const generateAndGetPayload = (body, req, res) => {
     line_items,
     payment_method_types: optionalParams.payment_method_types || ["card"],
     mode: optionalParams.mode || "payment",
-    success_url: CallBackUrl.stripe,
-    cancel_url: CancelBackUrl.stripe,
+    success_url: `${CallBackUrl.stripe}&tmpId=${tmpId}`,
+    cancel_url: `${CancelBackUrl.stripe}&tmpId=${tmpId}`,
     ...optionalParams, // Spread other optional params if any
   };
 
