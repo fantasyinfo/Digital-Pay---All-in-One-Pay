@@ -1,16 +1,25 @@
 import express from "express";
 import { methodNotAllowed } from "../../../../middlewares/methodNotAllowedMiddleware.js";
-import { paypal_callBack,paypal_cancelBack } from "../../../../controllers/callback/paypal/callback.paypal.controller.js";
-import { PaymentGateways } from "../../../../utils/constants.js";
 import { responseHandler } from "../../../../utils/responseHandler.js";
+
+import {
+  paypal_callBack,
+  paypal_cancelBack,
+} from "../../../../controllers/callback/paypal/callback.paypal.controller.js";
+import {
+  stripe_callBack,
+  stripe_cancelBack,
+} from "../../../../controllers/callback/stripe/callback.stripe.controller.js";
 
 const callbackRouter = express.Router();
 
 const callBackControllers = {
   paypal: paypal_callBack,
+  stripe: stripe_callBack,
 };
 const cancelBackControllers = {
   paypal: paypal_cancelBack,
+  stripe: stripe_cancelBack,
 };
 
 // callback response
@@ -19,15 +28,14 @@ callbackRouter
   .get((req, res) => _callBack(req, res))
   .all(methodNotAllowed);
 
-
-  callbackRouter
+callbackRouter
   .route("/cancel")
   .get((req, res) => _cancelBack(req, res))
   .all(methodNotAllowed);
 // callback
 
 const _callBack = (req, res) => {
-  const method = req.query.method
+  const method = req.query.method;
   const controller = callBackControllers[method];
 
   if (controller) {
@@ -44,7 +52,7 @@ const _callBack = (req, res) => {
 };
 
 const _cancelBack = (req, res) => {
-  const method = req.query.method
+  const method = req.query.method;
   const controller = cancelBackControllers[method];
 
   if (controller) {
