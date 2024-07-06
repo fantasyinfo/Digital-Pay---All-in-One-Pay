@@ -102,7 +102,7 @@ const transactionSchema = new Schema(
       required: false,
     },
     tmpId: {
-      type: String,
+      type: Schema.Types.ObjectId,
       ref: DBtables.tmp,
       require: true,
     },
