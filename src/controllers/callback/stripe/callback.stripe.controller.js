@@ -38,6 +38,7 @@ export const stripe_callBack = async (req, res) => {
       );
     }
 
+    console.log(first)
     // First check the status of this transaction
     const _headers = _transaction.headers;
     const _url =
@@ -75,7 +76,7 @@ export const stripe_callBack = async (req, res) => {
       // Prepare the return data
       const returnData = {
         status: _transaction.gatewayStatus,
-        token: transId,
+        token: _transaction.transId,
       };
 
       // Extract the user's return URL from the transaction data
@@ -169,7 +170,7 @@ export const stripe_cancelBack = async (req, res) => {
       // Prepare the return data
       const returnData = {
         status: _transaction.gatewayStatus,
-        token: transId,
+        token: _transaction.transId,
       };
 
       // Extract the user's return URL from the transaction data
