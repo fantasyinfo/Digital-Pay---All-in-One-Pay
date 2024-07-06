@@ -5,13 +5,17 @@ import {
   __company,
 } from "../../../utils/constants.js";
 import { responseHandler } from "../../../utils/responseHandler.js";
-import { validateParams } from "../../../utils/functionsUtil.js";
+import {
+  validateParams,
+  getRandomTmpStringId,
+} from "../../../utils/functionsUtil.js";
 import axios from "axios";
 import Transaction from "../../../models/gateway/Transactions.js";
 import {
   PaymentResponse,
   StatusResponse,
 } from "../../../utils/paymentResponse.js";
+import Tmp from "../../../models/gateway/Tmp.js";
 
 export const paypal_createPayment = async (req, res) => {
   const _body = req.body;
@@ -166,7 +170,8 @@ const createTransactionAndReturn = async (
   headers,
   payload,
   orderResponse,
-  userId
+  userId,
+  tmpId
 ) => {
   try {
     // Create transaction entry object
@@ -190,6 +195,7 @@ const createTransactionAndReturn = async (
       currentStatus: PaymentStatus.pending,
       currency: _body.currency,
       description: _body.description || "",
+      tmpId,
     };
 
     // Create and save the transaction
@@ -199,7 +205,6 @@ const createTransactionAndReturn = async (
 
     return transactionResObj;
   } catch (error) {
-    console.log("step 4");
     console.error("Error creating transaction:", error);
     throw new Error("Failed to create transaction.");
   }
@@ -214,8 +219,12 @@ const checkOutTrans = async (
   req,
   res
 ) => {
+  // create tmp transation for callback & cancel ref
+  const tmpId = getRandomTmpStringId();
+  const tmptransaction = await Tmp.create({ tmpId });
+
   // payload
-  let payload = generateAndGetPayload(_body, req, res);
+  let payload = generateAndGetPayload(_body, req, res, tmpId);
 
   // headers
   let headers = {
@@ -239,7 +248,8 @@ const checkOutTrans = async (
     headers,
     payload,
     orderResponse,
-    userId
+    userId,
+    tmptransaction._id
   );
 
   const initId = transactions._id.toString();
@@ -252,7 +262,7 @@ const checkOutTrans = async (
   };
 };
 
-const generateAndGetPayload = (body, req, res) => {
+const generateAndGetPayload = (body, req, res, tmpId) => {
   let calculatedTotalAmount = 0;
 
   const purchase_units = body.orderdata.map((item, index) => {
@@ -301,8 +311,8 @@ const generateAndGetPayload = (body, req, res) => {
           locale: paypalExperienceContext.locale || "en-US",
           landing_page: paypalExperienceContext.landing_page || "LOGIN",
           user_action: paypalExperienceContext.user_action || "PAY_NOW",
-          return_url: CallBackUrl.paypal,
-          cancel_url: CancelBackUrl.paypal,
+          return_url: `${CallBackUrl.paypal}&tmpId=${tmpId}`,
+          cancel_url: `${CancelBackUrl.paypal}&tmpId=${tmpId}`,
         },
       },
     },
