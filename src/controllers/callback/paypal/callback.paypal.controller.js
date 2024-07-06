@@ -113,8 +113,18 @@ export const paypal_cancelBack = async (req, res) => {
   const transId = data.token;
   const tmpId = data.tmpId;
   try {
+    const tmpDoc = await Tmp.findOne({ tmpId });
+
+    if (!tmpDoc) {
+      console.log("No Tmp document found with the given tmpId.");
+      return;
+    }
+
     // Fetch the transaction with this transId
-    const _transaction = await Transaction.findOne({ transId, tmpId });
+    const _transaction = await Transaction.findOne({
+      transId,
+      tmpId: tmpDoc._id,
+    });
 
     if (!_transaction) {
       // Return failed response

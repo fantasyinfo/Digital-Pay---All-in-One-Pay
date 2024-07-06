@@ -146,7 +146,6 @@ const checkOutTrans = async (
   const tmpId = getRandomTmpStringId();
   const tmptransaction = await Tmp.create({ tmpId });
 
-
   // payload
   let payload = generateAndGetPayload(_body, req, res, tmpId);
 
@@ -159,8 +158,6 @@ const checkOutTrans = async (
   const orderResponse = await axios.post(gatewayUrl, qs.stringify(payload), {
     headers,
   });
-
-  
 
   const transactions = await createTransactionAndReturn(
     mode,
@@ -233,12 +230,7 @@ const createTransactionAndReturn = async (
 };
 
 const generateAndGetPayload = (body, req, res, tmpId) => {
-  let calculatedTotalAmount = 0;
-
   const line_items = body.orderdata.map((item, index) => {
-    const itemTotal = item.price * item.qty;
-    calculatedTotalAmount += itemTotal;
-
     return {
       quantity: item.qty,
       price_data: {
@@ -250,20 +242,6 @@ const generateAndGetPayload = (body, req, res, tmpId) => {
       },
     };
   });
-
-  if (calculatedTotalAmount !== body.total_amount) {
-    console.log(
-      `Calculated total amount (${calculatedTotalAmount}) does not match provided total amount (${body.total_amount})`
-    );
-
-    return responseHandler.customError(
-      req,
-      res,
-      null,
-      `Calculated total amount (${calculatedTotalAmount}) does not match provided total amount (${body.total_amount})`,
-      400
-    );
-  }
 
   const optionalParams = body.optional_params || {};
 

@@ -263,12 +263,7 @@ const checkOutTrans = async (
 };
 
 const generateAndGetPayload = (body, req, res, tmpId) => {
-  let calculatedTotalAmount = 0;
-
   const purchase_units = body.orderdata.map((item, index) => {
-    const itemTotal = item.price * item.qty;
-    calculatedTotalAmount += itemTotal;
-
     return {
       reference_id: index,
       amount: {
@@ -279,20 +274,6 @@ const generateAndGetPayload = (body, req, res, tmpId) => {
       // quantity: item.qty,
     };
   });
-
-  if (calculatedTotalAmount !== body.total_amount) {
-    console.log(
-      `Calculated total amount (${calculatedTotalAmount}) does not match provided total amount (${body.total_amount})`
-    );
-
-    return responseHandler.customError(
-      req,
-      res,
-      null,
-      `Calculated total amount (${calculatedTotalAmount}) does not match provided total amount (${body.total_amount})`,
-      400
-    );
-  }
 
   const optionalParams = body.optional_params || {};
   const paypalExperienceContext =
