@@ -1,5 +1,7 @@
 import axios from "axios";
 import Transaction from "../../../models/gateway/Transactions.js";
+import Tmp from "../../../models/gateway/Tmp.js";
+
 import { ApiKeysLive, ApiKeysSandbox } from "../../../utils/apiKeys.js";
 import {
   Modes,
@@ -9,14 +11,25 @@ import {
 import { paypalStatus } from "../../../utils/gateway.status.js";
 import { responseHandler } from "../../../utils/responseHandler.js";
 import fs from "fs";
+
 export const paypal_callBack = async (req, res) => {
   const data = req.query;
   const transId = data.token;
   const tmpId = data.tmpId;
 
   try {
+    const tmpDoc = await Tmp.findOne({ tmpId });
+
+    if (!tmpDoc) {
+      console.log("No Tmp document found with the given tmpId.");
+      return;
+    }
+
     // Fetch the transaction with this transId
-    const _transaction = await Transaction.findOne({ transId, tmpId });
+    const _transaction = await Transaction.findOne({
+      transId,
+      tmpId: tmpDoc._id,
+    });
 
     if (!_transaction) {
       // Return failed response
@@ -101,7 +114,7 @@ export const paypal_cancelBack = async (req, res) => {
   const tmpId = data.tmpId;
   try {
     // Fetch the transaction with this transId
-    const _transaction = await Transaction.findOne({ transId,tmpId });
+    const _transaction = await Transaction.findOne({ transId, tmpId });
 
     if (!_transaction) {
       // Return failed response
