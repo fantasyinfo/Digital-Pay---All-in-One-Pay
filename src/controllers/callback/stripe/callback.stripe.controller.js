@@ -38,7 +38,7 @@ export const stripe_callBack = async (req, res) => {
       );
     }
 
-    console.log(first)
+  
     // First check the status of this transaction
     const _headers = _transaction.headers;
     const _url =
