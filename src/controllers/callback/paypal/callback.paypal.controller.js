@@ -12,10 +12,11 @@ import fs from "fs";
 export const paypal_callBack = async (req, res) => {
   const data = req.query;
   const transId = data.token;
+  const tmpId = data.tmpId;
 
   try {
     // Fetch the transaction with this transId
-    const _transaction = await Transaction.findOne({ transId });
+    const _transaction = await Transaction.findOne({ transId, tmpId });
 
     if (!_transaction) {
       // Return failed response
@@ -97,10 +98,10 @@ export const paypal_callBack = async (req, res) => {
 export const paypal_cancelBack = async (req, res) => {
   const data = req.query;
   const transId = data.token;
-
+  const tmpId = data.tmpId;
   try {
     // Fetch the transaction with this transId
-    const _transaction = await Transaction.findOne({ transId });
+    const _transaction = await Transaction.findOne({ transId,tmpId });
 
     if (!_transaction) {
       // Return failed response

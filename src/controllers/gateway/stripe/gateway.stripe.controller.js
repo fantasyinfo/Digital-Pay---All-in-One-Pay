@@ -160,7 +160,7 @@ const checkOutTrans = async (
     headers,
   });
 
-  console.log(tmptransaction);
+  
 
   const transactions = await createTransactionAndReturn(
     mode,

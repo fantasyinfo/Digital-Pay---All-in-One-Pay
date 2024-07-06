@@ -183,6 +183,7 @@ export const stripe_callBack = async (req, res) => {
 
 
   const query = req.query;
+
   const queryString = JSON.stringify(query);
   // Define the file path and name (adjust as per your file system structure)
   const filePath = "./calback_data.txt";
