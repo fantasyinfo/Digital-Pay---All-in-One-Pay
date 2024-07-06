@@ -6,3 +6,9 @@ export const paypalStatus = [
   "COMPLETED",
   "PAYER_ACTION_REQUIRED",
 ];
+
+
+export const stripeStatus = [
+  "unpaid",
+  "paid"
+];
