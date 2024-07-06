@@ -208,7 +208,7 @@ const createTransactionAndReturn = async (
       payUrl,
       userId,
       transId: orderResponse?.data?.id,
-      amount: _body.total_amount,
+      amount: parseInt(_body.total_amount + "00"),
       isSuccess: false,
       isFailed: false,
       currentStatus: PaymentStatus.pending,
@@ -238,7 +238,7 @@ const generateAndGetPayload = (body, req, res, tmpId) => {
         product_data: {
           name: item.product_name,
         },
-        unit_amount: parseInt(item.price),
+        unit_amount: parseInt(item.price + "00"),
       },
     };
   });

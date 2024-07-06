@@ -12,6 +12,7 @@ import fs from "fs";
 import Tmp from "../../../models/gateway/Tmp.js";
 
 export const stripe_callBack = async (req, res) => {
+  const data = req.query;
   const tmpId = data.tmpId;
 
   try {
@@ -105,6 +106,7 @@ export const stripe_callBack = async (req, res) => {
 };
 
 export const stripe_cancelBack = async (req, res) => {
+  const data = req.query;
   const tmpId = data.tmpId;
 
   try {
