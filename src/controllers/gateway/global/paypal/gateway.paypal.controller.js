@@ -1,21 +1,22 @@
-import { CallBackUrl, CancelBackUrl } from "../../../utils/apiKeys.js";
+import { CallBackUrl, CancelBackUrl } from "../../../../utils/apiKeys.js";
 import {
+  APIstatusCodes,
   PaymentGateways,
   PaymentStatus,
   __company,
-} from "../../../utils/constants.js";
-import { responseHandler } from "../../../utils/responseHandler.js";
+} from "../../../../utils/constants.js";
+import { responseHandler } from "../../../../utils/responseHandler.js";
 import {
   validateParams,
   getRandomTmpStringId,
-} from "../../../utils/functionsUtil.js";
+} from "../../../../utils/functionsUtil.js";
 import axios from "axios";
-import Transaction from "../../../models/gateway/Transactions.js";
+import Transaction from "../../../../models/gateway/Transactions.js";
 import {
   PaymentResponse,
   StatusResponse,
-} from "../../../utils/paymentResponse.js";
-import Tmp from "../../../models/gateway/Tmp.js";
+} from "../../../../utils/paymentResponse.js";
+import Tmp from "../../../../models/gateway/Tmp.js";
 
 export const paypal_createPayment = async (req, res) => {
   const _body = req.body;
@@ -84,7 +85,8 @@ export const paypal_checkStatus = async (req, res) => {
       req,
       res,
       "errorMessages.gateway.notValidTransactionId",
-      "errorMessages.gateway.notValidTransactionId"
+      "errorMessages.gateway.notValidTransactionId",
+      APIstatusCodes[401]
     );
   }
 

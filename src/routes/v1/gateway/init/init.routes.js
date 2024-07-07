@@ -4,11 +4,11 @@ import { validPaymentType } from "../../../../middlewares/validPaymentTypeMiddle
 import {
   paypal_createPayment,
   paypal_checkStatus,
-} from "../../../../controllers/gateway/paypal/gateway.paypal.controller.js";
+} from "../../../../controllers/gateway/global/paypal/gateway.paypal.controller.js";
 import {
   stripe_checkStatus,
   stripe_createPayment,
-} from "../../../../controllers/gateway/stripe/gateway.stripe.controller.js";
+} from "../../../../controllers/gateway/global/stripe/gateway.stripe.controller.js";
 import { PaymentGateways } from "../../../../utils/constants.js";
 import { responseHandler } from "../../../../utils/responseHandler.js";
 import {

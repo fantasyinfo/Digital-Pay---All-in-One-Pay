@@ -74,6 +74,6 @@ export const PaymentGateways = {
 
 // step 2
 export const PaymentGatewayCode = {
-  1: PaymentGateways.paypal,
-  2: PaymentGateways.stripe,
+  paypal: PaymentGateways.paypal,
+  stripe: PaymentGateways.stripe,
 };

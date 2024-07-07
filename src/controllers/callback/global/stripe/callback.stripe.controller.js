@@ -1,15 +1,15 @@
 import axios from "axios";
-import Transaction from "../../../models/gateway/Transactions.js";
-import { ApiKeysLive, ApiKeysSandbox } from "../../../utils/apiKeys.js";
+import Transaction from "../../../../models/gateway/Transactions.js";
+import { ApiKeysLive, ApiKeysSandbox } from "../../../../utils/apiKeys.js";
 import {
   Modes,
   PaymentGateways,
   PaymentStatus,
-} from "../../../utils/constants.js";
-import { stripeStatus } from "../../../utils/gateway.status.js";
-import { responseHandler } from "../../../utils/responseHandler.js";
+} from "../../../../utils/constants.js";
+import { stripeStatus } from "../../../../utils/gateway.status.js";
+import { responseHandler } from "../../../../utils/responseHandler.js";
 import fs from "fs";
-import Tmp from "../../../models/gateway/Tmp.js";
+import Tmp from "../../../../models/gateway/Tmp.js";
 
 export const stripe_callBack = async (req, res) => {
   const data = req.query;

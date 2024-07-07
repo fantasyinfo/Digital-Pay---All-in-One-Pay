@@ -90,3 +90,6 @@ docker-compose.*.yml
 *.tgz
 *.bak
 *.swp
+
+
+test.js

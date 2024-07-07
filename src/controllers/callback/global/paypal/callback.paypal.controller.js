@@ -1,15 +1,15 @@
 import axios from "axios";
-import Transaction from "../../../models/gateway/Transactions.js";
-import Tmp from "../../../models/gateway/Tmp.js";
+import Transaction from "../../../../models/gateway/Transactions.js";
+import Tmp from "../../../../models/gateway/Tmp.js";
 
-import { ApiKeysLive, ApiKeysSandbox } from "../../../utils/apiKeys.js";
+import { ApiKeysLive, ApiKeysSandbox } from "../../../../utils/apiKeys.js";
 import {
   Modes,
   PaymentGateways,
   PaymentStatus,
-} from "../../../utils/constants.js";
-import { paypalStatus } from "../../../utils/gateway.status.js";
-import { responseHandler } from "../../../utils/responseHandler.js";
+} from "../../../../utils/constants.js";
+import { paypalStatus } from "../../../../utils/gateway.status.js";
+import { responseHandler } from "../../../../utils/responseHandler.js";
 import fs from "fs";
 
 export const paypal_callBack = async (req, res) => {

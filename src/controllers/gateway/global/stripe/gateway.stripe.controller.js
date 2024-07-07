@@ -3,26 +3,27 @@ import {
   ApiKeysSandbox,
   CallBackUrl,
   CancelBackUrl,
-} from "../../../utils/apiKeys.js";
+} from "../../../../utils/apiKeys.js";
 import {
+  APIstatusCodes,
   PaymentGateways,
   PaymentStatus,
   __company,
-} from "../../../utils/constants.js";
-import { responseHandler } from "../../../utils/responseHandler.js";
+} from "../../../../utils/constants.js";
+import { responseHandler } from "../../../../utils/responseHandler.js";
 
 import axios from "axios";
-import Transaction from "../../../models/gateway/Transactions.js";
+import Transaction from "../../../../models/gateway/Transactions.js";
 import qs from "qs";
 import {
   PaymentResponse,
   StatusResponse,
-} from "../../../utils/paymentResponse.js";
+} from "../../../../utils/paymentResponse.js";
 import {
   getRandomTmpStringId,
   validateParams,
-} from "../../../utils/functionsUtil.js";
-import Tmp from "../../../models/gateway/Tmp.js";
+} from "../../../../utils/functionsUtil.js";
+import Tmp from "../../../../models/gateway/Tmp.js";
 
 export const stripe_createPayment = async (req, res) => {
   const _body = req.body;
@@ -85,7 +86,8 @@ export const stripe_checkStatus = async (req, res) => {
       req,
       res,
       "errorMessages.gateway.notValidTransactionId",
-      "errorMessages.gateway.notValidTransactionId"
+      "errorMessages.gateway.notValidTransactionId",
+      APIstatusCodes[401]
     );
   }
 
