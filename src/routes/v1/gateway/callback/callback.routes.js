@@ -5,11 +5,11 @@ import { responseHandler } from "../../../../utils/responseHandler.js";
 import {
   paypal_callBack,
   paypal_cancelBack,
-} from "../../../../controllers/callback/paypal/callback.paypal.controller.js";
+} from "../../../../controllers/callback/global/paypal/callback.paypal.controller.js";
 import {
   stripe_callBack,
   stripe_cancelBack,
-} from "../../../../controllers/callback/stripe/callback.stripe.controller.js";
+} from "../../../../controllers/callback/global/stripe/callback.stripe.controller.js";
 
 const callbackRouter = express.Router();
 

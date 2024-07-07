@@ -1,14 +1,7 @@
-import {
-  Modes,
-  PaymentGateways,
-} from "./constants.js";
+import { Modes, PaymentGateways } from "./constants.js";
 import { responseHandler } from "./responseHandler.js";
 import { validateHeaders } from "./functionsUtil.js";
-import {
-    ApiKeysLive,
-    ApiKeysSandbox,
-  } from "./apiKeys.js";
-
+import { ApiKeysLive, ApiKeysSandbox } from "./apiKeys.js";
 
 export class ValidateGatewayKeys {
   // mode: live, sandbox
@@ -31,15 +24,15 @@ export class ValidateGatewayKeys {
     if (this.mode === Modes.sandbox) {
       // Check if client sent their gateway sandbox details else use own
       if (
-        this.headers.gateway_sandbox_client_id &&
-        this.headers.gateway_sandbox_secret_key &&
-        this.headers.gateway_sandbox_client_id !== undefined &&
-        this.headers.gateway_sandbox_secret_key !== undefined &&
-        this.headers.gateway_sandbox_client_id !== "" &&
-        this.headers.gateway_sandbox_secret_key !== "undefined"
+        this.headers["X-Gateway-Sandbox-Client-ID"] &&
+        this.headers["X-Gateway-Sandbox-Secret-Key"] &&
+        this.headers["X-Gateway-Sandbox-Client-ID"] !== undefined &&
+        this.headers["X-Gateway-Sandbox-Secret-Key"] !== undefined &&
+        this.headers["X-Gateway-Sandbox-Client-ID"] !== "" &&
+        this.headers["X-Gateway-Sandbox-Secret-Key"] !== "undefined"
       ) {
-        this.gatewayClientID = this.headers.gateway_sandbox_client_id;
-        this.gatewaySecretKey = this.headers.gateway_sandbox_secret_key;
+        this.gatewayClientID = this.headers["X-Gateway-Sandbox-Client-ID"];
+        this.gatewaySecretKey = this.headers["X-Gateway-Sandbox-Secret-Key"];
         this.gatewayURL = ApiKeysSandbox[PaymentGateways[this.type]].url;
       } else {
         this.gatewayClientID =
@@ -49,10 +42,9 @@ export class ValidateGatewayKeys {
         this.gatewayURL = ApiKeysSandbox[PaymentGateways[this.type]].url;
       }
     } else if (this.mode === Modes.live) {
-
       const requiredValues = [
-        "gateway_live_client_id",
-        "gateway_live_secret_key",
+        "X-Gateway-Live-Client-ID",
+        "X-Gateway-Live-Secret-Key",
       ];
 
       const isValid = validateHeaders(
@@ -66,15 +58,15 @@ export class ValidateGatewayKeys {
       }
 
       if (
-        this.headers.gateway_live_client_id &&
-        this.headers.gateway_live_secret_key &&
-        this.headers.gateway_live_client_id !== undefined &&
-        this.headers.gateway_live_secret_key !== undefined &&
-        this.headers.gateway_live_client_id !== "" &&
-        this.headers.gateway_live_secret_key !== "undefined"
+        this.headers["X-Gateway-Live-Client-ID"] &&
+        this.headers["X-Gateway-Live-Secret-Key"] &&
+        this.headers["X-Gateway-Live-Client-ID"] !== undefined &&
+        this.headers["X-Gateway-Live-Secret-Key"] !== undefined &&
+        this.headers["X-Gateway-Live-Client-ID"] !== "" &&
+        this.headers["X-Gateway-Live-Secret-Key"] !== "undefined"
       ) {
-        this.gatewayClientID = this.headers.gateway_live_client_id;
-        this.gatewaySecretKey = this.headers.gateway_live_secret_key;
+        this.gatewayClientID = this.headers["X-Gateway-Live-Client-ID"];
+        this.gatewaySecretKey = this.headers["X-Gateway-Live-Secret-Key"];
         this.gatewayURL = ApiKeysLive[PaymentGateways[this.type]].url;
       } else {
         return responseHandler.customError(

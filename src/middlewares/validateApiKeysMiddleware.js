@@ -4,13 +4,14 @@ import { validateHeaders } from "../utils/functionsUtil.js";
 import { responseHandler } from "../utils/responseHandler.js";
 
 export const validateApiKeys = async (req, res, next) => {
-  const requiredValues = ["mode"];
+
+  const requiredValues = ["x-environment-mode"];
   const isValid = validateHeaders(req.headers, requiredValues, res, req);
   if (!isValid) {
     return;
   }
 
-  const mode = req.headers["mode"];
+  const mode = req.headers["x-environment-mode"];
 
   let findObj = {};
 
@@ -52,6 +53,7 @@ export const validateApiKeys = async (req, res, next) => {
   }
 
   try {
+
     const validateApiKeys = await ApiToken.findOne(findObj);
 
     if (!validateApiKeys) {

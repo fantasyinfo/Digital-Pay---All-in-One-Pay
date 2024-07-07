@@ -7,19 +7,20 @@ import {
 } from "../utils/constants.js";
 
 export const validPaymentType = (req, res, next) => {
-  const requiredValues = ["payment-method"];
+  const requiredValues = ["x-payment-method"];
   const isValid = validateHeaders(req.headers, requiredValues, res, req);
   if (!isValid) {
     return;
   }
 
-  const paymentMethodHeader = req.headers["payment-method"];
+  const paymentMethodHeader = req.headers["x-payment-method"];
 
   if (
     paymentMethodHeader &&
     Object.keys(PaymentGatewayCode).includes(paymentMethodHeader)
   ) {
-    const paymentGateway = PaymentGatewayCode[paymentMethodHeader].toLowerCase();
+    const paymentGateway =
+      PaymentGatewayCode[paymentMethodHeader].toLowerCase();
     req.paymentMethod = PaymentGateways[paymentGateway];
     next();
   } else {
