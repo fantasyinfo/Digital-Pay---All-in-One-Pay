@@ -1,0 +1,40 @@
+name: CICD
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Set up environment variables
+        run: echo "${{ secrets.PROD_MAIN_B }}" > .env
+
+      - name: Login to docker hub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build docker image
+        run: docker build -t fantasyinfo1/digi1pay .
+
+      - name: Publish image to docker hub
+        run: docker push fantasyinfo1/digi1pay:latest
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+    steps:
+      - name: Login to docker hub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Pull image from docker hub
+        run: docker pull fantasyinfo1/digi1pay:latest
+
+      - name: Delete old container
+        run: docker rm -f nodejs-app-container || true
+
+      - name: Run docker container
+        run: docker run -d -p 8000:8000 --name nodejs-app-container fantasyinfo1/digi1pay:latest

@@ -16,6 +16,7 @@ export const ApiKeysSandbox = {
     clientId: "pk_test_o6ScAy3rikKa1jKhsNZ9HwLn00HIrNEESf",
     secretKey: "sk_test_ZpiCxEOHseka5xDnfwoRoG0700L2MOuJkS",
   },
+
 };
 
 export const ApiKeysLive = {
@@ -31,13 +32,16 @@ export const ApiKeysLive = {
     clientId: "pk_test_o6ScAy3rikKa1jKhsNZ9HwLn00HIrNEESf",
     secretKey: "sk_test_ZpiCxEOHseka5xDnfwoRoG0700L2MOuJkS",
   },
+
 };
 
 export const CallBackUrl = {
   paypal: `${_callback}?method=paypal`,
   stripe: `${_callback}?method=stripe`,
+
 };
 export const CancelBackUrl = {
   paypal: `${_cancel}?method=paypal`,
   stripe: `${_cancel}?method=stripe`,
+
 };

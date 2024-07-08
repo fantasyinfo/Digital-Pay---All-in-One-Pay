@@ -210,7 +210,7 @@ const createTransactionAndReturn = async (
       payUrl,
       userId,
       transId: orderResponse?.data?.id,
-      amount: parseInt(_body.total_amount + "00"),
+      amount: parseInt(_body.total_amount),
       isSuccess: false,
       isFailed: false,
       currentStatus: PaymentStatus.pending,
