@@ -63,7 +63,7 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, cb) => {
       try {
-        // Log profile details for debugging
+      
 
         // Pass the user profile to Passport's callback
         cb(null, profile);
