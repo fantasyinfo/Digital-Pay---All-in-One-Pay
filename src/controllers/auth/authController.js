@@ -12,14 +12,14 @@ import { APIstatusCodes } from "../../utils/constants.js";
 const JWT_SECRET = process.env.JWT_SECRET;
 
 export const registerUser = async (req, res) => {
-  const requiredValues = [ "email", "password"];
-  const isValid = validateBody(req.body, requiredValues, res,req);
+  const requiredValues = ["email", "password"];
+  const isValid = validateBody(req.body, requiredValues, res, req);
   if (!isValid) {
     return;
   }
 
   try {
-    const {  email, password } = req.body;
+    const { email, password } = req.body;
 
     // Generate OTP
     const otp = generateOTP();
@@ -53,11 +53,11 @@ export const registerUser = async (req, res) => {
     // Generate JWT tokens
     const accessToken = generateAccessToken(newUser);
     const refreshToken = generateRefreshToken(newUser);
-    
+
     return responseHandler.success(
       req,
       res,
-      { email: newUser.email,accessToken, refreshToken },
+      { email: newUser.email, accessToken, refreshToken },
       "successMessages.auth.register"
     );
   } catch (error) {
@@ -70,10 +70,77 @@ export const registerUser = async (req, res) => {
   }
 };
 
+// google sign in
+export const googleSignIn = async (req, res) => {
+  const _payload = req.user;
+  const googleId = _payload._json.sub;
+  const firstName = _payload._json.given_name;
+  const lastName = _payload._json.family_name;
+  const email = _payload._json.email;
+  const otpVerify = _payload._json.email_verified;
+
+  try {
+    // console.log("Google Sign-in Payload:", _payload);
+    let user = await User.findOne({ googleId });
+
+    // Check if user exists with the same Google ID
+    if (!user) {
+      // console.log("User not found with Google ID, checking by email...");
+      // If no user found with Google ID, check by email
+      user = await User.findOne({ email });
+
+      if (!user) {
+        // console.log("Creating a new user...");
+        // If no user found by email, create a new user
+        user = new User({
+          firstName,
+          lastName,
+          email,
+          googleId,
+          password: generatePassword(), // You may need to adjust this
+          isGoogleSignIn: true,
+          isOTPVerified: otpVerify,
+          role: 1,
+        });
+        await user.save();
+      } else {
+        // console.log("Updating user with Google ID...");
+        // Update user with Google ID if found by email
+        user.googleId = googleId;
+        user.isGoogleSignIn = true;
+        await user.save();
+      }
+    } else {
+      // console.log("User found with Google ID.");
+    }
+
+    // Generate tokens
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+
+    // Redirect to success URL with tokens
+    let redirectUrl =
+      process.env.CURRENT_MODE === "production"
+        ? process.env.FRONT_LIVE_URL
+        : process.env.FRONT_LOCAL_URL;
+
+    redirectUrl += `/google/auth/success?e=${user.email}&a=${accessToken}&r=${refreshToken}`;
+
+    return res.redirect(redirectUrl);
+  } catch (error) {
+    console.log(error);
+    // Redirect to sign-in page in case of error
+    return res.redirect(
+      process.env.CURRENT_MODE === "production"
+        ? `${process.env.FRONT_LIVE_URL}/sign-in`
+        : `${process.env.FRONT_LOCAL_URL}/sign-in`
+    );
+  }
+};
 // Login user after OTP verification
 export const loginUser = async (req, res) => {
   const requiredValues = ["email", "password"];
-  const isValid = validateBody(req.body, requiredValues, res,req);
+  const isValid = validateBody(req.body, requiredValues, res, req);
   if (!isValid) {
     return;
   }
@@ -136,7 +203,7 @@ export const loginUser = async (req, res) => {
 // Verify OTP for account activation
 export const verifyOTP = async (req, res) => {
   const requiredValues = ["otp", "email"];
-  const isValid = validateBody(req.body, requiredValues, res,req);
+  const isValid = validateBody(req.body, requiredValues, res, req);
   if (!isValid) {
     return;
   }
@@ -203,7 +270,7 @@ export const verifyOTP = async (req, res) => {
 // Resend OTP for user registration
 export const resendOTP = async (req, res) => {
   const requiredValues = ["email"];
-  const isValid = validateBody(req.body, requiredValues, res,req);
+  const isValid = validateBody(req.body, requiredValues, res, req);
   if (!isValid) {
     return;
   }
@@ -271,7 +338,7 @@ export const resendOTP = async (req, res) => {
 // Send OTP for password reset
 export const sendPasswordResetOTP = async (req, res) => {
   const requiredValues = ["email"];
-  const isValid = validateBody(req.body, requiredValues, res,req);
+  const isValid = validateBody(req.body, requiredValues, res, req);
   if (!isValid) {
     return;
   }
@@ -333,7 +400,7 @@ export const sendPasswordResetOTP = async (req, res) => {
 // Reset password using OTP
 export const resetPassword = async (req, res) => {
   const requiredValues = ["email", "otp", "password"];
-  const isValid = validateBody(req.body, requiredValues, res,req);
+  const isValid = validateBody(req.body, requiredValues, res, req);
   if (!isValid) {
     return;
   }
@@ -370,8 +437,8 @@ export const resetPassword = async (req, res) => {
       );
     }
 
-    user.password = password; 
-    user.resetPasswordOTP = '';
+    user.password = password;
+    user.resetPasswordOTP = "";
     user.resetPasswordExpires = undefined;
     await user.save();
 
@@ -406,4 +473,14 @@ function generateRefreshToken(user) {
   return jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: "7d" });
 }
 
+function generatePassword(length = 8) {
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = " ";
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
 
+  return result;
+}

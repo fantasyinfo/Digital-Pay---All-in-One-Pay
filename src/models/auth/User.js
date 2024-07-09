@@ -11,7 +11,7 @@ const userSchema = new Schema({
   email: { type: String, required: true, unique: true },
   dob: { type: Date },
   phone: { type: String },
-  role:{type:Number, default:1},// 1 = user
+  role: { type: Number, default: 1 }, // 1 = user
   address: {
     addressLine1: { type: String },
     addressLine2: { type: String },
@@ -32,13 +32,15 @@ const userSchema = new Schema({
       return this.isModified('password'); // Only require if password is being modified
     }
   },
+  googleId: { type: String }, // Google ID field
+  isGoogleSignIn: { type: Boolean, default: false }, // Indicates if user signed in via Google
   accessToken: { type: String },
   refreshToken: { type: String },
   otp: { type: String },
   otpExpiresAt: { type: Date },
-  isOTPVerified:{type: Boolean, default:false},
-  resetPasswordOTP:{ type: String },
-  resetPasswordExpires:{ type: Date },
+  isOTPVerified: { type: Boolean, default: false },
+  resetPasswordOTP: { type: String },
+  resetPasswordExpires: { type: Date },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
