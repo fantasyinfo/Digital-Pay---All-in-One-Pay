@@ -5,4 +5,4 @@ steps to add new payment gateway
 #3 => create controller folder ./src/controllers/gateway/{abc}/gateway.{abc}.controller.js 
 #4 => include in route folder and register on paymentControllers
 #5 => register in transaction table
-#6 => ci/cd workflow updated
+#6 => ci/cd workflow updated.
