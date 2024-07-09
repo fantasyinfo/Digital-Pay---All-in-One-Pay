@@ -6,8 +6,8 @@ const { Schema } = mongoose;
 
 // Define user schema
 const userSchema = new Schema({
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
+  firstName: { type: String, required: false },
+  lastName: { type: String, required: false },
   email: { type: String, required: true, unique: true },
   dob: { type: Date },
   phone: { type: String },
@@ -30,13 +30,6 @@ const userSchema = new Schema({
     type: String,
     required: function() {
       return this.isModified('password'); // Only require if password is being modified
-    },
-    validate: {
-      validator: function (v) {
-        // Password regex: at least 1 uppercase, 1 lowercase, 1 number, 1 special character, min 8 characters
-        return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(v);
-      },
-      message: props => `${props.value} is not a valid password. Must have at least 1 uppercase, 1 lowercase, 1 number, 1 special character, and be at least 8 characters long.`
     }
   },
   accessToken: { type: String },

@@ -12,14 +12,14 @@ import { APIstatusCodes } from "../../utils/constants.js";
 const JWT_SECRET = process.env.JWT_SECRET;
 
 export const registerUser = async (req, res) => {
-  const requiredValues = ["firstName", "lastName", "email", "password"];
+  const requiredValues = [ "email", "password"];
   const isValid = validateBody(req.body, requiredValues, res,req);
   if (!isValid) {
     return;
   }
 
   try {
-    const { firstName, lastName, email, password } = req.body;
+    const {  email, password } = req.body;
 
     // Generate OTP
     const otp = generateOTP();
@@ -30,8 +30,6 @@ export const registerUser = async (req, res) => {
     const role = 1; //default to user as of now
     // Save OTP and user details to database
     const newUser = new User({
-      firstName,
-      lastName,
       email,
       password,
       otp,
@@ -52,10 +50,14 @@ export const registerUser = async (req, res) => {
 
     await transporter.sendMail(mailOptions);
 
+    // Generate JWT tokens
+    const accessToken = generateAccessToken(newUser);
+    const refreshToken = generateRefreshToken(newUser);
+    
     return responseHandler.success(
       req,
       res,
-      { email: newUser.email },
+      { email: newUser.email,accessToken, refreshToken },
       "successMessages.auth.register"
     );
   } catch (error) {
@@ -89,16 +91,16 @@ export const loginUser = async (req, res) => {
       );
     }
 
-    // Check if OTP is verified
-    if (!user.isOTPVerified) {
-      return responseHandler.customError(
-        req,
-        res,
-        "errorMessages.auth.otp.otpNotVerify",
-        "errorMessages.auth.otp.otpVerifyRequired",
-        APIstatusCodes[403]
-      );
-    }
+    // Check if OTP is verified (login the user if its not verified the email)
+    // if (!user.isOTPVerified) {
+    //   return responseHandler.customError(
+    //     req,
+    //     res,
+    //     "errorMessages.auth.otp.otpNotVerify",
+    //     "errorMessages.auth.otp.otpVerifyRequired",
+    //     APIstatusCodes[403]
+    //   );
+    // }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
