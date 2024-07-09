@@ -6,11 +6,36 @@ import {
   resendOTP,
   sendPasswordResetOTP,
   resetPassword,
+  googleSignIn,
 } from "../../../controllers/auth/authController.js";
 import { verifyToken } from "../../../middlewares/verifyTokenMiddleware.js";
 import { methodNotAllowed } from "../../../middlewares/methodNotAllowedMiddleware.js";
+import passport from "passport";
 
 const authRouter = express.Router();
+
+// google login
+authRouter
+  .route("/google-sign-in")
+  .get(
+    passport.authenticate("google", {
+      scope: ["profile", "email"],
+    })
+  )
+  .all(methodNotAllowed);
+
+
+
+authRouter.get(
+  "/google-sign-in/callback",
+  passport.authenticate("google", {
+    failureRedirect:
+      process.env.CURRENT_MODE === "production"
+        ? `${process.env.FRONT_LIVE_URL}/sign-in`
+        : `${process.env.FRONT_LOCAL_URL}/sign-in`,
+  }),
+  googleSignIn
+);
 
 authRouter.route("/register").post(registerUser).all(methodNotAllowed);
 
