@@ -16,6 +16,7 @@ export const paypal_callBack = async (req, res) => {
   const data = req.query;
   const transId = data.token;
   const tmpId = data.tmpId;
+  const orderId = data.orderId;
 
   try {
     const tmpDoc = await Tmp.findOne({ tmpId });
@@ -29,6 +30,7 @@ export const paypal_callBack = async (req, res) => {
     const _transaction = await Transaction.findOne({
       transId,
       tmpId: tmpDoc._id,
+      orderId,
     });
 
     if (!_transaction) {
@@ -77,8 +79,10 @@ export const paypal_callBack = async (req, res) => {
 
       // Prepare the return data
       const returnData = {
-        status: _transaction.gatewayStatus,
+        gatewayStatus: _transaction.gatewayStatus,
         token: transId,
+        status: _transaction.currentStatus,
+        orderId:orderId
       };
 
       // Extract the user's return URL from the transaction data
@@ -112,6 +116,7 @@ export const paypal_cancelBack = async (req, res) => {
   const data = req.query;
   const transId = data.token;
   const tmpId = data.tmpId;
+  const orderId = data.orderId;
   try {
     const tmpDoc = await Tmp.findOne({ tmpId });
 
@@ -124,6 +129,7 @@ export const paypal_cancelBack = async (req, res) => {
     const _transaction = await Transaction.findOne({
       transId,
       tmpId: tmpDoc._id,
+      orderId
     });
 
     if (!_transaction) {
@@ -172,8 +178,10 @@ export const paypal_cancelBack = async (req, res) => {
 
       // Prepare the return data
       const returnData = {
-        status: _transaction.gatewayStatus,
+        gatewayStatus: _transaction.gatewayStatus,
         token: transId,
+        status: _transaction.currentStatus,
+        orderId:orderId
       };
 
       // Extract the user's return URL from the transaction data

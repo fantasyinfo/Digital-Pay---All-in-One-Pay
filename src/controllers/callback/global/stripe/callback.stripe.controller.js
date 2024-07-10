@@ -14,6 +14,7 @@ import Tmp from "../../../../models/gateway/Tmp.js";
 export const stripe_callBack = async (req, res) => {
   const data = req.query;
   const tmpId = data.tmpId;
+  const orderId = data.orderId;
 
   try {
     // Fetch the transaction with this transId
@@ -26,6 +27,7 @@ export const stripe_callBack = async (req, res) => {
 
     const _transaction = await Transaction.findOne({
       tmpId: tmpDoc._id,
+      orderId
     });
 
     if (!_transaction) {
@@ -75,8 +77,10 @@ export const stripe_callBack = async (req, res) => {
 
       // Prepare the return data
       const returnData = {
-        status: _transaction.gatewayStatus,
-        token: _transaction.transId,
+        gatewayStatus: _transaction.gatewayStatus,
+        token: transId,
+        status: _transaction.currentStatus,
+        orderId:orderId
       };
 
       // Extract the user's return URL from the transaction data
@@ -109,6 +113,7 @@ export const stripe_callBack = async (req, res) => {
 export const stripe_cancelBack = async (req, res) => {
   const data = req.query;
   const tmpId = data.tmpId;
+  const orderId = data.orderId;
 
   try {
     // Fetch the transaction with this transId
@@ -121,6 +126,7 @@ export const stripe_cancelBack = async (req, res) => {
 
     const _transaction = await Transaction.findOne({
       tmpId: tmpDoc._id,
+      orderId
     });
 
     if (!_transaction) {
@@ -169,8 +175,10 @@ export const stripe_cancelBack = async (req, res) => {
 
       // Prepare the return data
       const returnData = {
-        status: _transaction.gatewayStatus,
-        token: _transaction.transId,
+        gatewayStatus: _transaction.gatewayStatus,
+        token: transId,
+        status: _transaction.currentStatus,
+        orderId:orderId
       };
 
       // Extract the user's return URL from the transaction data

@@ -16,6 +16,10 @@ const transactionSchema = new Schema(
       enum: [Modes.sandbox, Modes.live],
       required: true,
     },
+    orderId: {
+      type: String,
+      required: true,
+    },
     paymentType: {
       type: String,
       enum: [PaymentGateways.paypal, PaymentGateways.stripe],
@@ -104,7 +108,7 @@ const transactionSchema = new Schema(
     tmpId: {
       type: Schema.Types.ObjectId,
       ref: DBtables.tmp,
-      require: true,
+      required: true,
     },
   },
   {
@@ -112,13 +116,14 @@ const transactionSchema = new Schema(
   }
 );
 
-// Add indexes
+// Add indexes for faster querying and uniqueness enforcement
 transactionSchema.index({ transId: 1 }, { unique: true });
 transactionSchema.index({ userId: 1 });
 transactionSchema.index({ mode: 1 });
 transactionSchema.index({ paymentType: 1 });
 transactionSchema.index({ currentStatus: 1 });
 transactionSchema.index({ tmpId: 1 });
+transactionSchema.index({ userId: 1, orderId: 1 }, { unique: true });
 
 const Transaction = mongoose.model(DBtables.transaction, transactionSchema);
 

@@ -19,6 +19,7 @@ import {
 import Tmp from "../../../../models/gateway/Tmp.js";
 
 export const paypal_createPayment = async (req, res) => {
+
   const _body = req.body;
   const mode = req.mode;
   const userId = req.userId;
@@ -178,6 +179,7 @@ const createTransactionAndReturn = async (
   try {
     // Create transaction entry object
     const transactionObj = {
+      orderId:_body.order_id,
       mode,
       paymentType: PaymentGateways.paypal,
       gatewayUrl,
@@ -281,6 +283,7 @@ const generateAndGetPayload = (body, req, res, tmpId) => {
   const paypalExperienceContext =
     optionalParams.payment_source?.paypal?.experience_context || {};
 
+    
   let payload = {
     intent: optionalParams.intent || "CAPTURE",
     purchase_units: purchase_units,
@@ -290,12 +293,12 @@ const generateAndGetPayload = (body, req, res, tmpId) => {
           payment_method_preference:
             paypalExperienceContext.payment_method_preference ||
             "IMMEDIATE_PAYMENT_REQUIRED",
-          brand_name: paypalExperienceContext.brand_name || __company.name,
+          brand_name: req.userDetails.companyName || __company.name,
           locale: paypalExperienceContext.locale || "en-US",
           landing_page: paypalExperienceContext.landing_page || "LOGIN",
           user_action: paypalExperienceContext.user_action || "PAY_NOW",
-          return_url: `${CallBackUrl.paypal}&tmpId=${tmpId}`,
-          cancel_url: `${CancelBackUrl.paypal}&tmpId=${tmpId}`,
+          return_url: `${CallBackUrl.paypal}&tmpId=${tmpId}&orderId=${body.order_id}`,
+          cancel_url: `${CancelBackUrl.paypal}&tmpId=${tmpId}&orderId=${body.order_id}`,
         },
       },
     },

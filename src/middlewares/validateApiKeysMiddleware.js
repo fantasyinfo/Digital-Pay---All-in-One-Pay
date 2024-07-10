@@ -2,6 +2,7 @@ import ApiToken from "../models/user/ApiToken.js";
 import { APIstatusCodes, Modes } from "../utils/constants.js";
 import { validateHeaders } from "../utils/functionsUtil.js";
 import { responseHandler } from "../utils/responseHandler.js";
+import User from '../models/auth/User.js';
 
 export const validateApiKeys = async (req, res, next) => {
 
@@ -68,6 +69,7 @@ export const validateApiKeys = async (req, res, next) => {
 
     req.mode = mode;
     req.userId = validateApiKeys.user_id;
+    req.userDetails = await User.findById(validateApiKeys.user_id);
 
     next();
   } catch (error) {

@@ -197,6 +197,7 @@ const createTransactionAndReturn = async (
   try {
     // Create transaction entry object
     const transactionObj = {
+      orderId:_body.order_id,
       mode,
       paymentType: PaymentGateways.stripe,
       gatewayUrl,
@@ -251,8 +252,8 @@ const generateAndGetPayload = (body, req, res, tmpId) => {
     line_items,
     payment_method_types: optionalParams.payment_method_types || ["card"],
     mode: optionalParams.mode || "payment",
-    success_url: `${CallBackUrl.stripe}&tmpId=${tmpId}`,
-    cancel_url: `${CancelBackUrl.stripe}&tmpId=${tmpId}`,
+    success_url: `${CallBackUrl.stripe}&tmpId=${tmpId}&orderId=${body.order_id}`,
+    cancel_url: `${CancelBackUrl.stripe}&tmpId=${tmpId}&orderId=${body.order_id}`,
     ...optionalParams, // Spread other optional params if any
   };
 
