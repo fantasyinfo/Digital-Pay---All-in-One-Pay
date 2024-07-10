@@ -39,6 +39,7 @@ export const responseHandler = {
       status: translate(req, "success"),
       message: translate(req, messageKey),
       data,
+      code:200
     };
     return sendResponse(req, res, 200, responseBody);
   },
@@ -68,6 +69,7 @@ export const responseHandler = {
       status: translate(req, "error"),
       message: errorMessage,
       error: error.message || translate(req, "unknownError"),
+      code:500
     };
     return sendResponse(req, res, statusCode, responseBody);
   },
@@ -76,6 +78,7 @@ export const responseHandler = {
       status: translate(req, "error"),
       message: translate(req, "routeNotFound"),
       error: req?.originalUrl,
+      code:404
     };
     return sendResponse(req, res, 404, responseBody);
   },
@@ -87,6 +90,7 @@ export const responseHandler = {
           ? translate(req, messageKey)
           : messageKey,
       error: translate(req, errorKey),
+      code:statusCode
     };
     return sendResponse(req, res, statusCode, responseBody);
   },
