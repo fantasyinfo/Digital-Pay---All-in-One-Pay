@@ -7,6 +7,8 @@ import {
   sendPasswordResetOTP,
   resetPassword,
   googleSignIn,
+  getUser,
+  updateUser,
 } from "../../../controllers/auth/authController.js";
 import { verifyToken } from "../../../middlewares/verifyTokenMiddleware.js";
 import { methodNotAllowed } from "../../../middlewares/methodNotAllowedMiddleware.js";
@@ -53,13 +55,16 @@ authRouter
 authRouter.route("/password-reset").post(resetPassword).all(methodNotAllowed);
 
 authRouter
-  .route("/protected-route")
-  .get(verifyToken, (req, res) => {
-    res.json({
-      message: "Access granted to protected route.",
-      userId: req.userId,
-    });
-  })
+  .route("/get-user").post(verifyToken,getUser)
   .all(methodNotAllowed);
+
+
+  authRouter
+  .route("/update-user").post(verifyToken,updateUser)
+  .all(methodNotAllowed);
+
+
+
+
 
 export default authRouter;

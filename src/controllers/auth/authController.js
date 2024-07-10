@@ -458,6 +458,76 @@ export const resetPassword = async (req, res) => {
   }
 };
 
+export const getUser = async (req, res) => {
+  const userId = req.userId;
+  
+  try {
+    const user = await User.findById( userId );
+    if (!user) {
+      return responseHandler.customError(
+        req,
+        res,
+        "errorMessages.auth.user.userNotFound",
+        "errorMessages.auth.user.userDetailsNotMatch",
+        APIstatusCodes[404]
+      );
+    }
+
+    return responseHandler.success(
+      req,
+      res,
+      { user },
+      "successMessages.auth.user"
+    );
+  } catch (error) {
+    return responseHandler.error(
+      req,
+      res,
+      error,
+      "errorMessages.auth.user.userNotFound"
+    );
+  }
+};
+export const updateUser = async (req, res) => {
+  const userId = req.userId;
+  
+  try {
+    const user = await User.findById( userId );
+    if (!user) {
+      return responseHandler.customError(
+        req,
+        res,
+        "errorMessages.auth.user.userNotFound",
+        "errorMessages.auth.user.userDetailsNotMatch",
+        APIstatusCodes[404]
+      );
+    }
+
+     
+    user.firstName = req.body.firstName || '';
+    user.lastName = req.body.lastName || '';
+    user.dob = req.body.dob || '';
+    user.phone = req.body.phone || '';
+    user.address = req.body.address;
+
+    await user.save();
+
+    return responseHandler.success(
+      req,
+      res,
+      { user },
+      "successMessages.auth.userSave"
+    );
+  } catch (error) {
+    return responseHandler.error(
+      req,
+      res,
+      error,
+      "errorMessages.auth.user.userNotSave"
+    );
+  }
+};
+
 // Generate OTP function
 function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000).toString();

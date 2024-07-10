@@ -17,7 +17,8 @@
       },
       "user": {
         "userNotFound": "User not found.",
-        "userDetailsNotMatch": "User details not matched/found."
+        "userDetailsNotMatch": "User details not matched/found.",
+        "userNotSaved":"User Not Saved."
       },
       "password": {
         "passwordUpdateFailed": "Failed to update password."
@@ -67,7 +68,9 @@
       "otp": "OTP Verified Successfully.",
       "otpSend": "OTP sent successfully. Check your email.",
       "passwordRestOtpSend": "Password reset OTP sent successfully.",
-      "passwordUpdated": "Password Updated Successfully"
+      "passwordUpdated": "Password Updated Successfully",
+      "user":"User Found.",
+      "userSave":"User Saved Successfully"
     },
     "apiKeys": {
       "sandbox": {
