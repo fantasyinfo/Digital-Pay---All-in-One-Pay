@@ -506,6 +506,7 @@ export const updateUser = async (req, res) => {
      
     user.firstName = req.body.firstName || '';
     user.lastName = req.body.lastName || '';
+    user.companyName = req.body.companyName || '';
     user.dob = req.body.dob || '';
     user.phone = req.body.phone || '';
     user.address = req.body.address;

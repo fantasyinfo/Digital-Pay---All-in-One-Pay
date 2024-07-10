@@ -28,9 +28,9 @@ export const CheckPayloadForInit = (req, res, next) => {
 
   // Required fields
   const requiredFields = [
+    "order_id",
     "total_amount",
     "currency",
-    "payment_method",
     "return_url",
     "cancel_url",
     "orderdata",
@@ -114,6 +114,9 @@ export const CheckPayloadForInit = (req, res, next) => {
   }
   if (!validate_data(payload.currency, validators.isString)) {
     errors.push(`"currency" should be a string`);
+  }
+  if (!validate_data(payload.order_id, validators.isString)) {
+    errors.push(`"order_id" should be a string`);
   }
   if (!validate_data(payload.return_url, validators.isURL)) {
     errors.push(`"return_url" should be a string`);
