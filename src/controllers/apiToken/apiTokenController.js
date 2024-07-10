@@ -127,7 +127,7 @@ export const getLiveKeys = async (req, res) => {
   ) {
     const _response = {
       live_keys: liveKeys.live_keys,
-      createdAt: liveKeys.createdAt,
+      createdAt: liveKeys.updatedAt,
     };
     return responseHandler.success(
       req,
