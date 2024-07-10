@@ -57,53 +57,22 @@ export const generateLiveToken = async (req, res) => {
 
   try {
     const apiToken = await ApiToken.findOne({ user_id: userId });
-
-    // Check if live keys already exist
-    if (
-      apiToken &&
-      apiToken.live_keys &&
-      apiToken.live_keys.client_id &&
-      apiToken.live_keys.secret_key
-    ) {
-      return responseHandler.customError(
-        req,
-        res,
-        null,
-        "apiToken.live.tokenAlreadyExists",
-        APIstatusCodes[400]
-      );
-    }
-
     // Check if sandbox keys exist to generate live keys
-    if (
-      apiToken &&
-      apiToken.sandbox_keys &&
-      apiToken.sandbox_keys.client_id &&
-      apiToken.sandbox_keys.secret_key
-    ) {
-      const keys = generateTokens();
+    const keys = generateTokens();
 
-      // Update live keys in the existing ApiToken document
-      apiToken.live_keys = {
-        client_id: keys.clientId,
-        secret_key: keys.clientSecret,
-      };
-      await apiToken.save();
+    // Update live keys in the existing ApiToken document
+    apiToken.live_keys = {
+      client_id: keys.clientId,
+      secret_key: keys.clientSecret,
+    };
+    await apiToken.save();
 
-      return responseHandler.success(
-        req,
-        res,
-        apiToken,
-        "apiToken.live.tokenGenerated"
-      );
-    } else {
-      return responseHandler.error(
-        req,
-        res,
-        null,
-        "apiToken.live.createSandboxKeysFirst"
-      );
-    }
+    return responseHandler.success(
+      req,
+      res,
+      apiToken,
+      "apiToken.live.tokenGenerated"
+    );
   } catch (error) {
     return responseHandler.error(
       req,
@@ -125,10 +94,14 @@ export const getSandboxKeys = async (req, res) => {
     sanboxKeys.sandbox_keys.client_id &&
     sanboxKeys.sandbox_keys.secret_key
   ) {
+    const _response = {
+      sandbox_keys: sanboxKeys.sandbox_keys,
+      createdAt: sanboxKeys.createdAt,
+    };
     return responseHandler.success(
       req,
       res,
-      sanboxKeys.sandbox_keys,
+      _response,
       "successMessages.apiKeys.sandbox.apiKeys"
     );
   }
@@ -152,10 +125,14 @@ export const getLiveKeys = async (req, res) => {
     liveKeys.live_keys.client_id &&
     liveKeys.live_keys.secret_key
   ) {
+    const _response = {
+      live_keys: liveKeys.live_keys,
+      createdAt: liveKeys.createdAt,
+    };
     return responseHandler.success(
       req,
       res,
-      liveKeys.live_keys,
+      _response,
       "successMessages.apiKeys.live.apiKeys"
     );
   }
