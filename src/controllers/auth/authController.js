@@ -536,7 +536,7 @@ function generateOTP() {
 
 // Generate access token function
 function generateAccessToken(user) {
-  return jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: "1h" });
+  return jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: "1d" });
 }
 
 // Generate refresh token function

@@ -41,7 +41,13 @@ export const DBtables = {
   user: "User",
   api_keys: "Apikey",
   transaction:"Transaction",
-  tmp:"Tmp"
+  tmp:"Tmp",
+  plan:"Plan",
+  domain:"Domain",
+  paymentGateway:"PaymentGateway",
+  subscription:"Subscription",
+  enablePaymentGateway: "EnablePaymentGateway",
+  availablePaymentGateway:"AvailablePaymentGateway"
 };
 
 export const PaymentStatus = {
@@ -49,6 +55,9 @@ export const PaymentStatus = {
   completed: "Completed",
   failed: "Failed"
 }
+
+export const subscriptionStatus = ["active", "inactive", "expired"];
+
 
 export const SupportedCurrency = {
   USD: "USD",
