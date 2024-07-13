@@ -1,0 +1,45 @@
+import { Plan } from "../../../models/plans/Plans.js";
+import { validateBody } from "../../../utils/functionsUtil.js";
+import { responseHandler } from "../../../utils/responseHandler.js";
+
+export const addNewPlan = async (req, res) => {
+   
+  const requiredValues = [
+    "name",
+    "internationalGateways",
+    "nationalGateways",
+    "maxDomains",
+    "price",
+    "features",
+  ];
+
+  const isValid = validateBody(req.body, requiredValues, res, req);
+  if (!isValid) {
+    return;
+  }
+
+  const { name, internationalGateways, nationalGateways, maxDomains,price,features } =
+    req.body;
+  const data = { name, internationalGateways, nationalGateways, maxDomains,price,features };
+
+  try {
+    const addPlans = await Plan.create(data);
+    if (addPlans) {
+      return responseHandler.success(
+        req,
+        res,
+        addPlans,
+        "Plan Added."
+      );
+    } else {
+      return responseHandler.error(
+        req,
+        res,
+        addPlans,
+        "Plan Not Added."
+      );
+    }
+  } catch (error) {
+    return responseHandler.error(req, res, error, "Plan Not Added.");
+  }
+};

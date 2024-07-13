@@ -24,6 +24,9 @@ import gatewayRouter from "./routes/v1/gateway/init/init.routes.js";
 import { validateApiKeys } from "./middlewares/validateApiKeysMiddleware.js";
 import callbackRouter from "./routes/v1/gateway/callback/callback.routes.js";
 import { googleSignIn } from "./controllers/auth/authController.js";
+import superGatewayRouter from "./routes/v1/superDuper/gateway/super.gateway.routes.js";
+import { validateSuperDuper } from "./middlewares/superDuperMiddleware.js";
+import superPlanRouter from "./routes/v1/superDuper/plan/super.plan.routes.js";
 
 // init dot config
 dotenv.config();
@@ -63,8 +66,6 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, cb) => {
       try {
-      
-
         // Pass the user profile to Passport's callback
         cb(null, profile);
       } catch (err) {
@@ -86,6 +87,14 @@ app.use("/api/v1/apiToken", verifyToken, apiTokenRouter);
 app.use("/api/v1/gateway", validateApiKeys, gatewayRouter);
 
 app.use("/api/v1/callback", callbackRouter);
+
+// super duper routs
+app.use(
+  "/api/v1/admin/superDuper/gateway",
+  validateSuperDuper,
+  superGatewayRouter
+);
+app.use("/api/v1/admin/superDuper/plan", validateSuperDuper, superPlanRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
