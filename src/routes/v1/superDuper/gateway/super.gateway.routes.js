@@ -1,17 +1,21 @@
 import express from "express";
 import { methodNotAllowed } from "../../../../middlewares/methodNotAllowedMiddleware.js";
 import { addNewGateway,fetchAllGateway } from "../../../../controllers/superDuper/gateway/super.gateway.controller.js";
+import { validateSuperDuper } from "../../../../middlewares/superDuperMiddleware.js";
 
 const superGatewayRouter = express.Router();
 
+// super duper ruoutes
 superGatewayRouter
   .route("/add-new-gateway")
-  .post(addNewGateway)
+  .post(validateSuperDuper,addNewGateway)
   .all(methodNotAllowed);
 
+
+  // normal routes
   superGatewayRouter
   .route("/fetch-all-gateway")
-  .post(fetchAllGateway)
+  .get(fetchAllGateway)
   .all(methodNotAllowed);
 
 

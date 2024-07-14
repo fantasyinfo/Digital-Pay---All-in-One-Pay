@@ -91,10 +91,13 @@ app.use("/api/v1/callback", callbackRouter);
 // super duper routs
 app.use(
   "/api/v1/admin/superDuper/gateway",
-  validateSuperDuper,
   superGatewayRouter
 );
-app.use("/api/v1/admin/superDuper/plan", validateSuperDuper, superPlanRouter);
+app.use("/api/v1/admin/superDuper/plan", superPlanRouter);
+
+// =========
+app.use("/api/v1/gateway", verifyToken, superGatewayRouter);
+app.use("/api/v1/plan", verifyToken, superPlanRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

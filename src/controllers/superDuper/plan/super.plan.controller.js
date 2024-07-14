@@ -4,12 +4,16 @@ import { responseHandler } from "../../../utils/responseHandler.js";
 
 export const addNewPlan = async (req, res) => {
   const requiredValues = [
-    "name",
+    "title",
     "internationalGateways",
     "nationalGateways",
     "maxDomains",
-    "price",
     "features",
+    "monthlyPrice",
+    "yearlyPrice",
+    "popular",
+    "exclusive",
+    "description",
   ];
 
   const isValid = validateBody(req.body, requiredValues, res, req);
@@ -18,20 +22,28 @@ export const addNewPlan = async (req, res) => {
   }
 
   const {
-    name,
+    title,
     internationalGateways,
     nationalGateways,
     maxDomains,
-    price,
     features,
+    monthlyPrice,
+    yearlyPrice,
+    popular,
+    exclusive,
+    description,
   } = req.body;
   const data = {
-    name,
+    title,
     internationalGateways,
     nationalGateways,
     maxDomains,
-    price,
     features,
+    monthlyPrice,
+    yearlyPrice,
+    popular,
+    exclusive,
+    description,
   };
 
   try {
