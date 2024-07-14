@@ -3,7 +3,6 @@ import { validateBody } from "../../../utils/functionsUtil.js";
 import { responseHandler } from "../../../utils/responseHandler.js";
 
 export const addNewPlan = async (req, res) => {
-   
   const requiredValues = [
     "name",
     "internationalGateways",
@@ -18,28 +17,49 @@ export const addNewPlan = async (req, res) => {
     return;
   }
 
-  const { name, internationalGateways, nationalGateways, maxDomains,price,features } =
-    req.body;
-  const data = { name, internationalGateways, nationalGateways, maxDomains,price,features };
+  const {
+    name,
+    internationalGateways,
+    nationalGateways,
+    maxDomains,
+    price,
+    features,
+  } = req.body;
+  const data = {
+    name,
+    internationalGateways,
+    nationalGateways,
+    maxDomains,
+    price,
+    features,
+  };
 
   try {
     const addPlans = await Plan.create(data);
     if (addPlans) {
-      return responseHandler.success(
-        req,
-        res,
-        addPlans,
-        "Plan Added."
-      );
+      return responseHandler.success(req, res, addPlans, "Plan Added.");
+    } else {
+      return responseHandler.error(req, res, addPlans, "Plan Not Added.");
+    }
+  } catch (error) {
+    return responseHandler.error(req, res, error, "Plan Not Added.");
+  }
+};
+
+export const fetchAllPlan = async (req, res) => {
+  try {
+    const allPlans = await Plan.find();
+    if (allPlans) {
+      return responseHandler.success(req, res, allPlans, "Plans Lists List");
     } else {
       return responseHandler.error(
         req,
         res,
-        addPlans,
-        "Plan Not Added."
+        allPlans,
+        "Plans Lists Not Found."
       );
     }
   } catch (error) {
-    return responseHandler.error(req, res, error, "Plan Not Added.");
+    return responseHandler.error(req, res, error, "Plans Lists Not Founds.");
   }
 };
