@@ -47,13 +47,19 @@ export const DBtables = {
   paymentGateway:"PaymentGateway",
   subscription:"Subscription",
   enablePaymentGateway: "EnablePaymentGateway",
-  availablePaymentGateway:"AvailablePaymentGateway"
+  availablePaymentGateway:"AvailablePaymentGateway",
+  historicalSubscription:"HistoricalSubscription"
 };
 
 export const PaymentStatus = {
   pending: "Pending",
   completed: "Completed",
   failed: "Failed"
+}
+
+export const PlansPerios = {
+  monthly:'MONTHLY',
+  yearly: 'YEARLY'
 }
 
 export const subscriptionStatus = ["active", "inactive", "expired"];

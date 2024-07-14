@@ -2,6 +2,7 @@ import express from "express";
 import { methodNotAllowed } from "../../../../middlewares/methodNotAllowedMiddleware.js";
 import {
   addNewPlan,
+  buyOrRenewSubscription,
   fetchAllPlan,
 } from "../../../../controllers/superDuper/plan/super.plan.controller.js";
 import { validateSuperDuper } from "../../../../middlewares/superDuperMiddleware.js";
@@ -21,5 +22,10 @@ superPlanRouter
   .route("/fetch-all-plan")
   .get(fetchAllPlan)
   .all(methodNotAllowed);
+
+superPlanRouter
+.route("/buy-renew-subscription")
+.post(buyOrRenewSubscription)
+.all(methodNotAllowed);
 
 export default superPlanRouter;

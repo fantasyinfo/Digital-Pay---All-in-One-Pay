@@ -98,6 +98,7 @@ app.use("/api/v1/admin/superDuper/plan", superPlanRouter);
 // =========
 app.use("/api/v1/gateway", verifyToken, superGatewayRouter);
 app.use("/api/v1/plan", verifyToken, superPlanRouter);
+app.use("/api/v1/subscription", verifyToken, superPlanRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
