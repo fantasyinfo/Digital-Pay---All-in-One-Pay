@@ -27,6 +27,7 @@ import { googleSignIn } from "./controllers/auth/authController.js";
 import superGatewayRouter from "./routes/v1/superDuper/gateway/super.gateway.routes.js";
 import { validateSuperDuper } from "./middlewares/superDuperMiddleware.js";
 import superPlanRouter from "./routes/v1/superDuper/plan/super.plan.routes.js";
+import domainsRouter from "./routes/v1/dashboard/domains/domains.routes.js";
 
 // init dot config
 dotenv.config();
@@ -99,6 +100,7 @@ app.use("/api/v1/admin/superDuper/plan", superPlanRouter);
 app.use("/api/v1/gateway", verifyToken, superGatewayRouter);
 app.use("/api/v1/plan", verifyToken, superPlanRouter);
 app.use("/api/v1/subscription", verifyToken, superPlanRouter);
+app.use("/api/v1/domain", verifyToken, domainsRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
