@@ -7,7 +7,8 @@ import bcrypt from "bcrypt";
 import { transporter } from "../../utils/nodeMailer.js";
 import { validateBody } from "../../utils/functionsUtil.js";
 import i18next from "../../utils/i18nextTranslate.js";
-import { APIstatusCodes } from "../../utils/constants.js";
+import { APIstatusCodes, subscriptionStatus } from "../../utils/constants.js";
+import { Subscription } from "../../models/plans/Subscription.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -50,14 +51,61 @@ export const registerUser = async (req, res) => {
 
     await transporter.sendMail(mailOptions);
 
-    // Generate JWT tokens
-    const accessToken = generateAccessToken(newUser);
-    const refreshToken = generateRefreshToken(newUser);
 
+
+      // Fetch user's current subscription
+      const currentSubscription = await Subscription.findOne({
+        userId: newUser._id,
+        status: subscriptionStatus[0], // Ensure this matches the active status in your constants
+      })
+        .sort({ endDate: -1 })
+        .populate("planId");
+  
+
+  
+      // Append currentPlan details to responseUser
+      const responseUser = {
+        _id: newUser?._id,
+        firstName: newUser?.firstName,
+        lastName: newUser?.lastName,
+        email: newUser?.email,
+        role: newUser?.role,
+        googleId: newUser?.googleId,
+        isGoogleSignIn: newUser?.isGoogleSignIn,
+        dob: newUser?.dob,
+        phone: newUser?.phone,
+        address: newUser?.address, // Assuming this is needed on the frontend
+        currentPlan: {
+          _id: currentSubscription?._id,
+          planId: {
+            _id: currentSubscription?.planId._id,
+            title: currentSubscription?.planId.title,
+            description: currentSubscription?.planId.description,
+            internationalGateways:
+              currentSubscription?.planId.internationalGateways,
+            nationalGateways: currentSubscription?.planId.nationalGateways,
+            maxDomains: currentSubscription?.planId.maxDomains,
+            monthlyPrice: currentSubscription?.planId.monthlyPrice,
+            yearlyPrice: currentSubscription?.planId.yearlyPrice,
+            popular: currentSubscription?.planId.popular,
+            exclusive: currentSubscription?.planId.exclusive,
+            features: currentSubscription?.planId.features,
+            createdAt: currentSubscription?.planId.createdAt,
+            updatedAt: currentSubscription?.planId.updatedAt,
+          },
+          startDate: currentSubscription?.startDate,
+          endDate: currentSubscription?.endDate,
+          status: currentSubscription?.status,
+          createdAt: currentSubscription?.createdAt,
+          updatedAt: currentSubscription?.updatedAt,
+        },
+        accessToken: generateAccessToken(newUser),
+        refreshToken: generateRefreshToken(newUser),
+      };
     return responseHandler.success(
       req,
       res,
-      { email: newUser.email, accessToken, refreshToken },
+      responseUser,
       "successMessages.auth.register"
     );
   } catch (error) {
@@ -147,6 +195,8 @@ export const loginUser = async (req, res) => {
 
   try {
     const { email, password } = req.body;
+
+    // Find the user by email
     const user = await User.findOne({ email });
     if (!user) {
       return responseHandler.customError(
@@ -154,21 +204,11 @@ export const loginUser = async (req, res) => {
         res,
         "errorMessages.auth.user.userNotFound",
         "errorMessages.auth.user.userDetailsNotMatch",
-        APIstatusCodes[404]
+        404 // Assuming APIstatusCodes[404] is the status code
       );
     }
 
-    // Check if OTP is verified (login the user if its not verified the email)
-    // if (!user.isOTPVerified) {
-    //   return responseHandler.customError(
-    //     req,
-    //     res,
-    //     "errorMessages.auth.otp.otpNotVerify",
-    //     "errorMessages.auth.otp.otpVerifyRequired",
-    //     APIstatusCodes[403]
-    //   );
-    // }
-
+    // Check password match
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return responseHandler.customError(
@@ -176,21 +216,70 @@ export const loginUser = async (req, res) => {
         res,
         "errorMessages.auth.login.detailsNotMatch",
         "errorMessages.auth.login.incorrectDetails",
-        APIstatusCodes[401]
+        401 // Assuming APIstatusCodes[401] is the status code
       );
     }
 
-    // Generate JWT tokens
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
+    // Fetch user's current subscription
+    const currentSubscription = await Subscription.findOne({
+      userId: user._id,
+      status: subscriptionStatus[0], // Ensure this matches the active status in your constants
+    })
+      .sort({ endDate: -1 })
+      .populate("planId");
+
+ 
+
+    // Append currentPlan details to responseUser
+    const responseUser = {
+      _id: user?._id,
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      email: user?.email,
+      role: user?.role,
+      googleId: user?.googleId,
+      isGoogleSignIn: user?.isGoogleSignIn,
+      dob: user?.dob,
+      phone: user?.phone,
+      address: user?.address, // Assuming this is needed on the frontend
+      currentPlan: {
+        _id: currentSubscription?._id,
+        planId: {
+          _id: currentSubscription?.planId._id,
+          title: currentSubscription?.planId.title,
+          description: currentSubscription?.planId.description,
+          internationalGateways:
+            currentSubscription?.planId.internationalGateways,
+          nationalGateways: currentSubscription?.planId.nationalGateways,
+          maxDomains: currentSubscription?.planId.maxDomains,
+          monthlyPrice: currentSubscription?.planId.monthlyPrice,
+          yearlyPrice: currentSubscription?.planId.yearlyPrice,
+          popular: currentSubscription?.planId.popular,
+          exclusive: currentSubscription?.planId.exclusive,
+          features: currentSubscription?.planId.features,
+          createdAt: currentSubscription?.planId.createdAt,
+          updatedAt: currentSubscription?.planId.updatedAt,
+        },
+        startDate: currentSubscription?.startDate,
+        endDate: currentSubscription?.endDate,
+        status: currentSubscription?.status,
+        createdAt: currentSubscription?.createdAt,
+        updatedAt: currentSubscription?.updatedAt,
+      },
+      accessToken: generateAccessToken(user),
+      refreshToken: generateRefreshToken(user),
+    };
+
+ 
 
     return responseHandler.success(
       req,
       res,
-      { accessToken, refreshToken },
+      responseUser,
       "successMessages.auth.login"
     );
   } catch (error) {
+    console.error("Error logging in user:", error); // Log detailed error
     return responseHandler.error(
       req,
       res,
@@ -460,9 +549,9 @@ export const resetPassword = async (req, res) => {
 
 export const getUser = async (req, res) => {
   const userId = req.userId;
-  
+
   try {
-    const user = await User.findById( userId );
+    const user = await User.findById(userId);
     if (!user) {
       return responseHandler.customError(
         req,
@@ -473,10 +562,59 @@ export const getUser = async (req, res) => {
       );
     }
 
+      // Fetch user's current subscription
+      const currentSubscription = await Subscription.findOne({
+        userId: user._id,
+        status: subscriptionStatus[0], // Ensure this matches the active status in your constants
+      })
+        .sort({ endDate: -1 })
+        .populate("planId");
+  
+    
+  
+      // Append currentPlan details to responseUser
+      const responseUser = {
+        _id: user?._id,
+        firstName: user?.firstName,
+        lastName: user?.lastName,
+        email: user?.email,
+        role: user?.role,
+        googleId: user?.googleId,
+        isGoogleSignIn: user?.isGoogleSignIn,
+        dob: user?.dob,
+        phone: user?.phone,
+        address: user?.address, // Assuming this is needed on the frontend
+        currentPlan: {
+          _id: currentSubscription?._id,
+          planId: {
+            _id: currentSubscription?.planId._id,
+            title: currentSubscription?.planId.title,
+            description: currentSubscription?.planId.description,
+            internationalGateways:
+              currentSubscription?.planId.internationalGateways,
+            nationalGateways: currentSubscription?.planId.nationalGateways,
+            maxDomains: currentSubscription?.planId.maxDomains,
+            monthlyPrice: currentSubscription?.planId.monthlyPrice,
+            yearlyPrice: currentSubscription?.planId.yearlyPrice,
+            popular: currentSubscription?.planId.popular,
+            exclusive: currentSubscription?.planId.exclusive,
+            features: currentSubscription?.planId.features,
+            createdAt: currentSubscription?.planId.createdAt,
+            updatedAt: currentSubscription?.planId.updatedAt,
+          },
+          startDate: currentSubscription?.startDate,
+          endDate: currentSubscription?.endDate,
+          status: currentSubscription?.status,
+          createdAt: currentSubscription?.createdAt,
+          updatedAt: currentSubscription?.updatedAt,
+        },
+        accessToken: generateAccessToken(user),
+        refreshToken: generateRefreshToken(user),
+      };
     return responseHandler.success(
       req,
       res,
-      { user },
+      { responseUser },
       "successMessages.auth.user"
     );
   } catch (error) {
@@ -490,9 +628,9 @@ export const getUser = async (req, res) => {
 };
 export const updateUser = async (req, res) => {
   const userId = req.userId;
-  
+
   try {
-    const user = await User.findById( userId );
+    const user = await User.findById(userId);
     if (!user) {
       return responseHandler.customError(
         req,
@@ -503,20 +641,69 @@ export const updateUser = async (req, res) => {
       );
     }
 
-     
-    user.firstName = req.body.firstName || '';
-    user.lastName = req.body.lastName || '';
-    user.companyName = req.body.companyName || '';
-    user.dob = req.body.dob || '';
-    user.phone = req.body.phone || '';
+    user.firstName = req.body.firstName || "";
+    user.lastName = req.body.lastName || "";
+    user.companyName = req.body.companyName || "";
+    user.dob = req.body.dob || "";
+    user.phone = req.body.phone || "";
     user.address = req.body.address;
 
     await user.save();
 
+      // Fetch user's current subscription
+      const currentSubscription = await Subscription.findOne({
+        userId: user._id,
+        status: subscriptionStatus[0], // Ensure this matches the active status in your constants
+      })
+        .sort({ endDate: -1 })
+        .populate("planId");
+  
+   
+  
+      // Append currentPlan details to responseUser
+      const responseUser = {
+        _id: user?._id,
+        firstName: user?.firstName,
+        lastName: user?.lastName,
+        email: user?.email,
+        role: user?.role,
+        googleId: user?.googleId,
+        isGoogleSignIn: user?.isGoogleSignIn,
+        dob: user?.dob,
+        phone: user?.phone,
+        address: user?.address, // Assuming this is needed on the frontend
+        currentPlan: {
+          _id: currentSubscription?._id,
+          planId: {
+            _id: currentSubscription?.planId._id,
+            title: currentSubscription?.planId.title,
+            description: currentSubscription?.planId.description,
+            internationalGateways:
+              currentSubscription?.planId.internationalGateways,
+            nationalGateways: currentSubscription?.planId.nationalGateways,
+            maxDomains: currentSubscription?.planId.maxDomains,
+            monthlyPrice: currentSubscription?.planId.monthlyPrice,
+            yearlyPrice: currentSubscription?.planId.yearlyPrice,
+            popular: currentSubscription?.planId.popular,
+            exclusive: currentSubscription?.planId.exclusive,
+            features: currentSubscription?.planId.features,
+            createdAt: currentSubscription?.planId.createdAt,
+            updatedAt: currentSubscription?.planId.updatedAt,
+          },
+          startDate: currentSubscription?.startDate,
+          endDate: currentSubscription?.endDate,
+          status: currentSubscription?.status,
+          createdAt: currentSubscription?.createdAt,
+          updatedAt: currentSubscription?.updatedAt,
+        },
+        accessToken: generateAccessToken(user),
+        refreshToken: generateRefreshToken(user),
+      };
+
     return responseHandler.success(
       req,
       res,
-      { user },
+      { responseUser },
       "successMessages.auth.userSave"
     );
   } catch (error) {
