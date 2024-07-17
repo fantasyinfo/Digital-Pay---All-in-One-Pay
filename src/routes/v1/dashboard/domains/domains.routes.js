@@ -5,6 +5,6 @@ import { addDomains, getAllDomains } from "../../../../controllers/dashboard/dom
 const domainsRouter = express.Router();
 
 domainsRouter.route("/add-domains").post(addDomains).all(methodNotAllowed);
-domainsRouter.route("/get-all-domains").post(getAllDomains).all(methodNotAllowed);
+domainsRouter.route("/get-all-domains").get(getAllDomains).all(methodNotAllowed);
 
 export default domainsRouter;
