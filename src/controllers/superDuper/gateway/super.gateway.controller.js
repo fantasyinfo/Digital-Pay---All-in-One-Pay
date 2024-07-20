@@ -8,6 +8,8 @@ export const addNewGateway = async (req, res) => {
     "gatewayHeaderName",
     "isNational",
     "isInternational",
+    "gatewayWebsite",
+    "gatewayLogo",
   ];
 
   const isValid = validateBody(req.body, requiredValues, res, req);
@@ -15,11 +17,40 @@ export const addNewGateway = async (req, res) => {
     return;
   }
 
-  const { gatewayName, gatewayHeaderName, isNational, isInternational } =
-    req.body;
-  const data = { gatewayName, gatewayHeaderName, isNational, isInternational };
+  const {
+    gatewayName,
+    gatewayHeaderName,
+    isNational,
+    isInternational,
+    gatewayCountry,
+    gatewayWebsite,
+    gatewayLogo,
+  } = req.body;
+  const data = {
+    gatewayName,
+    gatewayHeaderName,
+    isNational,
+    isInternational,
+    gatewayCountry,
+    gatewayWebsite,
+    gatewayLogo,
+  };
 
   try {
+    // first check if this header is already then return
+    const already = await AvailablePaymentGateway.findOne({
+      gatewayHeaderName,
+    });
+
+    if (already)
+      return responseHandler.customError(
+        req,
+        res,
+        already,
+        "Payment Gateway is Already added.",
+        403
+      );
+
     const addGateway = await AvailablePaymentGateway.create(data);
     if (addGateway) {
       return responseHandler.success(

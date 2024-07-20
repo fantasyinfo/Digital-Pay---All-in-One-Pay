@@ -80,7 +80,7 @@ export const addDomains = async (req, res) => {
           req,
           res,
           null,
-          "No new domains to add.",
+          "Domain Already Added",
           500
         );
       }
@@ -104,9 +104,11 @@ export const addDomains = async (req, res) => {
       return responseHandler.error(req, res, null, "Domains Not Added.");
     }
   } catch (error) {
+    console.log(error)
     return responseHandler.error(req, res, error, "Domains Not Added.");
   }
 };
+
 
 export const getAllDomains = async (req, res) => {
   const userId = req.userId;
