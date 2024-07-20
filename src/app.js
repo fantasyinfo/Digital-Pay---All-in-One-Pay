@@ -28,6 +28,7 @@ import superGatewayRouter from "./routes/v1/superDuper/gateway/super.gateway.rou
 import { validateSuperDuper } from "./middlewares/superDuperMiddleware.js";
 import superPlanRouter from "./routes/v1/superDuper/plan/super.plan.routes.js";
 import domainsRouter from "./routes/v1/dashboard/domains/domains.routes.js";
+import gatewayEnableRouter from "./routes/v1/dashboard/gatewayenable/gatewayenable.routes.js";
 
 // init dot config
 dotenv.config();
@@ -101,6 +102,7 @@ app.use("/api/v1/allgateway", verifyToken, superGatewayRouter);
 app.use("/api/v1/plan", verifyToken, superPlanRouter);
 app.use("/api/v1/subscription", verifyToken, superPlanRouter);
 app.use("/api/v1/domain", verifyToken, domainsRouter);
+app.use("/api/v1/gatewayenable", verifyToken, gatewayEnableRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

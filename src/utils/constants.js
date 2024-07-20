@@ -61,6 +61,10 @@ export const PlansPerios = {
   monthly:'MONTHLY',
   yearly: 'YEARLY'
 }
+export const GatewaysTypes = {
+  national:'NATIONAL',
+  international: 'INTERNATIONAL'
+}
 
 export const subscriptionStatus = ["active", "inactive", "expired"];
 
