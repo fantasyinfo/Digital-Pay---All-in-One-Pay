@@ -1,24 +1,23 @@
 import { Schema, model, Types } from "mongoose";
 import { DBtables } from "../../utils/constants.js";
-const enablePaymentGatewaySchema = new Schema({
-  user: { type: Types.ObjectId, ref: DBtables.user, required: true },
-
-  gateways: [
-    {
-      gatewayId: {
-        type: Types.ObjectId,
-        ref: DBtables.availablePaymentGateway,
-        required: true,
-      },
-      clientId: { type: String, required: true },
-      clientSecret: { type: String, required: true },
-      status: { type: Boolean, default: false },
+const enablePaymentGatewaySchema = new Schema(
+  {
+    userId: { type: Types.ObjectId, ref: DBtables.user, required: true },
+    gatewayId: {
+      type: Types.ObjectId,
+      ref: DBtables.availablePaymentGateway,
+      required: true,
     },
-  ],
-},
-{
-  timestamps: true,
-});
+    credentials: { type: Object, required: true },
+    status: { type: Boolean, default: true },
+    isNational: { type: Boolean, required: true },
+    isInternational: { type: Boolean, required: true },
+    mode:{type:String}
+  },
+  {
+    timestamps: true,
+  }
+);
 
 export const EnablePaymentGateway = model(
   DBtables.enablePaymentGateway,
