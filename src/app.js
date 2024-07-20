@@ -97,7 +97,7 @@ app.use(
 app.use("/api/v1/admin/superDuper/plan", superPlanRouter);
 
 // =========
-app.use("/api/v1/gateway", verifyToken, superGatewayRouter);
+app.use("/api/v1/allgateway", verifyToken, superGatewayRouter);
 app.use("/api/v1/plan", verifyToken, superPlanRouter);
 app.use("/api/v1/subscription", verifyToken, superPlanRouter);
 app.use("/api/v1/domain", verifyToken, domainsRouter);

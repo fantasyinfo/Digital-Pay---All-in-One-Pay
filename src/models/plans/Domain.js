@@ -21,5 +21,5 @@ const domainSchema = new Schema(
     timestamps: true,
   }
 );
-
+domainSchema.index({ "domains.domainName": 1 }, { unique: false });
 export const Domain = model(DBtables.domain, domainSchema);

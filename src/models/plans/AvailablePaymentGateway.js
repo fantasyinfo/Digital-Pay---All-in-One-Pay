@@ -7,6 +7,9 @@ const availablePaymentGatewaySchema = new Schema(
     status: { type: Boolean, required: true, default: true },
     isNational: { type: Boolean },
     isInternational: { type: Boolean },
+    gatewayCountry: { type: String, required:false },
+    gatewayWebsite: { type: String, required:true },
+    gatewayLogo: { type: String, required:true },
   },
   {
     timestamps: true,
