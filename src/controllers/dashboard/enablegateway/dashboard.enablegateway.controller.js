@@ -100,3 +100,32 @@ export const enableGateway = async (req, res) => {
     return responseHandler.error(req, res, error, "Gateway Not Added.");
   }
 };
+
+
+export const getAllEnabledGateway = async (req, res) => {
+
+  const userId = req.userId;
+  let queryID = req.query.id || null;
+
+  console.log(JSON.stringify(req.query, null, 2));
+  try {
+    const allEnablePaymentGateway = await EnablePaymentGateway.find({ userId });
+    if (allEnablePaymentGateway) {
+      return responseHandler.success(
+        req,
+        res,
+        allEnablePaymentGateway,
+        "All Paymments Gateway Enabled Lists List"
+      );
+    } else {
+      return responseHandler.error(
+        req,
+        res,
+        allEnablePaymentGateway,
+        "No Paymments Gateway Enabled Lists Not Found."
+      );
+    }
+  } catch (error) {
+    return responseHandler.error(req, res, error, "Paymments Gateway Enabled Lists Not Founds.");
+  }
+};
