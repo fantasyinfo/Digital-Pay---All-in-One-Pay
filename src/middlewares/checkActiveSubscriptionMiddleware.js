@@ -24,7 +24,7 @@ export const validateSubscription = async (req, res, next) => {
       );
     }
 
-    req.subscription = currentSubscription.planId;
+    req.subscription = currentSubscription;
     next();
   } catch (error) {
     return responseHandler.customError(
